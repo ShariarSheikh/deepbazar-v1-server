@@ -9,7 +9,7 @@
     "baseUrl": "src/",
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "resolveJsonModule": true,
-    "outDir": "./dist",
+    "outDir": "./build",
     "removeComments": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
