@@ -11,10 +11,10 @@ export interface IAuth extends Document {
 
 const AuthSchema = new Schema<IAuth>(
   {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    profileImageUrl: { type: String, required: true }
+    name: { type: String },
+    email: { type: String, unique: true },
+    password: { type: String },
+    profileImageUrl: { type: String }
   },
   {
     timestamps: true

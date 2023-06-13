@@ -1,6 +1,8 @@
 export const PORT = 8000
 
-export const environment = process.env.NODE_ENV
+export const environment = process.env.environment
+
+export const secretTokenKey = process.env.tokenSecretkey
 
 export const databaseConfig = {
   username: process.env.mongoDbUserName,

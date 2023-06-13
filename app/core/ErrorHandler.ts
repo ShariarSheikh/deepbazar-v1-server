@@ -4,11 +4,10 @@ import ApiResponse from '../core/ApiResponse'
 //------------------------------------------------
 
 //------------------------------------------------
-export const GlobalErrorHandler = async (error: any, req: Request, res: Response, next: NextFunction) => {
+export const GlobalErrorHandler = async (error: any, _req: Request, res: Response, _next: NextFunction) => {
   const response = new ApiResponse(res)
 
   error.statusCode = error.statusCode ?? 500
-
   if (error.statusCode === 500) return response.internalServerError()
   return undefined
 }

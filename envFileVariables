@@ -1,3 +1,7 @@
+  environment = development
+
+  tokenSecretkey = 
+
   mongoDbUserName= 
   mongoDbpassword= 
   mongoDbcluster= 

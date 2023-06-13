@@ -7,14 +7,23 @@ interface UserRegisterData {
   profileImageUrl: string
 }
 
+interface LoginPropsData {
+  email: string
+  password: string
+}
+
 class AuthController {
   public async findUserWithEmail(email: string) {
     return await AuthModel.findOne({ email })
   }
 
+  public async login({ email, password }: LoginPropsData) {
+    return await AuthModel.findOne({ email })
+  }
+
   public async createUser(body: UserRegisterData) {
     const { name, email, password, profileImageUrl } = body
-    const user = await AuthModel.create({ name, email, password, profileImageUrl })
+    return await AuthModel.create({ name, email, password, profileImageUrl })
   }
 }
 
