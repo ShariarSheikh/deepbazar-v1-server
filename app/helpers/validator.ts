@@ -40,7 +40,7 @@ export default (schema: Joi.AnySchema, source: ValidationSource = ValidationSour
       const { details } = error
       const message = details.map((i) => i.message.replace(/['"]+/g, '')).join(',')
 
-      console.log(message)
+      // console.log(message)
 
       next(response.badRequest(message))
     } catch (error) {

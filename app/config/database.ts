@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import mongoose, { ConnectOptions } from 'mongoose'
 import { databaseConfig, environment } from './variables.config'
 

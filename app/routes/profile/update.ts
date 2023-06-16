@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import ControllerProduct from '../../controllers/product.controller'
+import ControllerProduct from '../../controllers/ProductController'
 
 //----------------------------------
 
