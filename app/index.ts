@@ -1,8 +1,8 @@
-/* eslint-disable no-console */
 import 'dotenv/config'
 import app from './app'
 import { PORT } from './config/variables.config'
+import logger from './core/Logger'
 
 app.listen(PORT, () => {
-  console.log(`Server listening on PORT ${PORT}`)
+  logger.info(`Server listening on PORT ${PORT}`)
 })

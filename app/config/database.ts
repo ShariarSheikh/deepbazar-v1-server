@@ -1,5 +1,5 @@
-/* eslint-disable no-console */
 import mongoose, { ConnectOptions } from 'mongoose'
+import logger from '../core/Logger'
 import { databaseConfig, environment } from './variables.config'
 
 // DB variables
@@ -14,9 +14,9 @@ const databaseUrl = environment === 'development' ? localDbUrl : cloudDbUrl
 const connectDatabase = async () => {
   try {
     await mongoose.connect(databaseUrl, dbOptions)
-    console.log(`Database connected with ${environment === 'development' ? 'local database' : 'cloud database'}`)
+    logger.info(`Database connected with ${environment === 'development' ? 'local database' : 'cloud database'}`)
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error)
+    logger.info('Error connecting to MongoDB:', error)
   }
 }
 export default connectDatabase

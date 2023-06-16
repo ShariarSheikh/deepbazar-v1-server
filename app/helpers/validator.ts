@@ -2,6 +2,7 @@ import ApiResponse from 'core/ApiResponse'
 import { NextFunction, Request, Response } from 'express'
 import Joi from 'joi'
 import { Types } from 'mongoose'
+import logger from '../core/Logger'
 
 export enum ValidationSource {
   BODY = 'body',
@@ -40,7 +41,7 @@ export default (schema: Joi.AnySchema, source: ValidationSource = ValidationSour
       const { details } = error
       const message = details.map((i) => i.message.replace(/['"]+/g, '')).join(',')
 
-      // console.log(message)
+      logger.error(message)
 
       next(response.badRequest(message))
     } catch (error) {

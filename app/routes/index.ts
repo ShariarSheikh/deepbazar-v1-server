@@ -31,9 +31,4 @@ router.use(PRODUCTS_ROOT_PATH, listRoute)
 router.use(PRODUCTS_ROOT_PATH, updateRoute)
 router.use(PRODUCTS_ROOT_PATH, searchRoute)
 
-// Profile
-// const PROFILE_ROOT_PATH = '/api/profile'
-// router.use(PROFILE_ROOT_PATH, profileRoutes.getProfileRoutes)
-// router.use(PROFILE_ROOT_PATH, profileRoutes.updateRoutes)
-
 export default router
