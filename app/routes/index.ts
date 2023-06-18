@@ -13,8 +13,14 @@ import updateRoute from './product/update'
 //-------------------------------------------
 const router = Router()
 
-router.get('/api', (_req, res) => {
-  res.status(200).json({ Name: 'Shariar Sheikh' })
+router.get('/api/health', (_req, res) => {
+  res.status(200).json({
+    Author: {
+      name: 'Shariar Sheikh',
+      Headline: 'Frontend Focused Full-Stack Developer',
+      linkedin: 'https://www.linkedin.com/in/sheikhshariar/'
+    }
+  })
 })
 
 // Auth
