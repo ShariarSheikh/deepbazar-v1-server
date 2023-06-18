@@ -7,7 +7,7 @@
     "start": "TZ='UTC' yarn build && node -r dotenv/config build/index.js",
     "dev": "TZ='UTC' npx concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"yarn watch-ts\" \"nodemon -r dotenv/config build/index.js\"",
     "watch-ts": "tsc -w",
-    "build": "yarn install && yarn clean && tsc",
+    "build": "yarn; yarn install && yarn clean && tsc",
     "clean": "rimraf ./build",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
