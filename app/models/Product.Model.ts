@@ -1,7 +1,7 @@
 import { Document, Schema, model } from 'mongoose'
 
 export interface IProject extends Document {
-  product_id: number
+  product_id: string
   title: string
   description: string
   price: number
@@ -38,7 +38,7 @@ export interface IProject extends Document {
 
 const ProductSchema = new Schema<IProject>(
   {
-    product_id: { type: Number, required: true, unique: true },
+    product_id: { type: String, required: true, unique: true },
     title: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
@@ -58,13 +58,13 @@ const ProductSchema = new Schema<IProject>(
     },
     related_products: [
       {
-        product_id: { type: Number, required: true, unique: true },
-        title: { type: String, required: true, unique: true },
+        product_id: { type: String, required: true },
+        title: { type: String, required: true },
         price: { type: Number, required: true },
         image: { type: [String], required: true }
       }
     ],
-    product_url: { type: String, required: true, unique: true }
+    product_url: { type: String, required: true }
   },
   { timestamps: true }
 )

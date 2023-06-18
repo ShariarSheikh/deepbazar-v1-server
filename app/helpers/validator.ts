@@ -1,7 +1,7 @@
-import ApiResponse from 'core/ApiResponse'
 import { NextFunction, Request, Response } from 'express'
 import Joi from 'joi'
 import { Types } from 'mongoose'
+import ApiResponse from '../core/ApiResponse'
 import logger from '../core/Logger'
 
 export enum ValidationSource {
@@ -43,7 +43,7 @@ export default (schema: Joi.AnySchema, source: ValidationSource = ValidationSour
 
       logger.error(message)
 
-      next(response.badRequest(message))
+      return response.badRequest(message)
     } catch (error) {
       next(error)
     }

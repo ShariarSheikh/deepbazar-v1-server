@@ -16,7 +16,7 @@ listRoute.get(
     const response = new ApiResponse(res)
 
     const products = await ProductController.list()
-    return response.success({ products })
+    return response.success({ total: products?.length ?? 0, products })
   })
 )
 
