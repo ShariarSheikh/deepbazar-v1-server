@@ -4,12 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "TZ='UTC' yarn build && node -r dotenv/config build/index.js",
+    "start": "TZ='UTC' node -r dotenv/config build/index.js",
     "dev": "TZ='UTC' npx concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"yarn watch-ts\" \"nodemon -r dotenv/config build/index.js\"",
     "watch-ts": "tsc -w",
-    "build": "yarn install && yarn clean && yarn tsc",
+    "build": "yarn install && yarn clean && tsc",
     "clean": "rimraf ./build",
-    "tsc": "./node_modules/typescript/bin/tsc",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "prettier": "prettier --check .",
@@ -37,7 +36,8 @@
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
     "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.2.0"
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.1.3"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -50,7 +50,6 @@
     "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
     "mongoose": "^7.2.3",
-    "typescript": "^5.1.3",
     "winston": "^3.9.0"
   },
   "engines": {
