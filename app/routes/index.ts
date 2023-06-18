@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import loginRoute from './auth/login'
-import registerRoute from './auth/register'
 import createRoutes from './product/create'
 import deleteRoutes from './product/delete'
 import detailsRoute from './product/details'
@@ -25,7 +24,7 @@ router.get('/api/health', (_req, res) => {
 
 // Auth
 const AUTH_ROOT_PATH = '/api/auth'
-router.use(AUTH_ROOT_PATH, registerRoute)
+// router.use(AUTH_ROOT_PATH, registerRoute)
 router.use(AUTH_ROOT_PATH, loginRoute)
 
 // Product
