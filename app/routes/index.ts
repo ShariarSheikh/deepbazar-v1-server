@@ -1,11 +1,8 @@
 import { Router } from 'express'
 import loginRoute from './auth/login'
-import createRoutes from './product/create'
-import deleteRoutes from './product/delete'
 import detailsRoute from './product/details'
 import listRoute from './product/list'
 import searchRoute from './product/search'
-import updateRoute from './product/update'
 
 //-------------------------------------------
 
@@ -29,11 +26,11 @@ router.use(AUTH_ROOT_PATH, loginRoute)
 
 // Product
 const PRODUCTS_ROOT_PATH = '/api/product'
-router.use(PRODUCTS_ROOT_PATH, createRoutes)
-router.use(PRODUCTS_ROOT_PATH, deleteRoutes)
+// router.use(PRODUCTS_ROOT_PATH, createRoutes)
+// router.use(PRODUCTS_ROOT_PATH, deleteRoutes)
 router.use(PRODUCTS_ROOT_PATH, detailsRoute)
 router.use(PRODUCTS_ROOT_PATH, listRoute)
-router.use(PRODUCTS_ROOT_PATH, updateRoute)
+// router.use(PRODUCTS_ROOT_PATH, updateRoute)
 router.use(PRODUCTS_ROOT_PATH, searchRoute)
 
 export default router
