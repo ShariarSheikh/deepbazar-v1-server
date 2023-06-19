@@ -1,12 +1,18 @@
-import cors from 'cors'
+import cors, { CorsOptions } from 'cors'
 import Express from 'express'
 
 const jsonParser = Express.json()
 const urlencoded = Express.urlencoded({ extended: true })
 
-const corsOptions = {
-  origin: ['https://deepbazar.vercel.app/', 'http://localhost:4093/'],
-  optionsSuccessStatus: 200
+const allowOrigins = ['http://localhost:4093', 'https://deepbazar.vercel.app']
+const corsOptions: CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      return callback(new Error('Not allowed by CORS'))
+    }
+  }
 }
 const corsUrl = cors(corsOptions)
 
