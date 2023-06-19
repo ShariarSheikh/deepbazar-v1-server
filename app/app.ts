@@ -10,7 +10,7 @@ const app = Express()
 connectDatabase()
 
 //Middleware
-app.use(rootMiddleware.jsonParser, rootMiddleware.urlencoded)
+app.use(rootMiddleware.jsonParser, rootMiddleware.urlencoded, rootMiddleware.corsUrl)
 //ROUTER
 app.use(router)
 
