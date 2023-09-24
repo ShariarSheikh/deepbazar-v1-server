@@ -1,8 +1,7 @@
 version: '3.9'
 
 services:
-
-   #MongoDb database
+  #MongoDb database
   mongo_db:
     container_name: db_container
     image: mongo:latest
@@ -20,13 +19,11 @@ services:
       MONGODB_URI: mongodb://mongo_db:27017
       environment: development
     depends_on:
-      - mongo_db 
+      - mongo_db
     ports:
       - 8000:8000
     volumes:
       - .:/app
-  
 
 volumes:
   mongo_db: {}
-    
