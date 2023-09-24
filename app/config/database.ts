@@ -1,9 +1,8 @@
 import mongoose, { ConnectOptions } from 'mongoose'
 import logger from '../core/Logger'
-import { databaseConfig, environment } from './variables.config'
+import { databaseConfig, environment, localDbUrl } from './variables.config'
 
 // DB variables
-const localDbUrl = `mongodb://localhost:27017`
 const cloudDbUrl = `mongodb+srv://${databaseConfig.username}:${databaseConfig.password}@${databaseConfig.cluster}.ebdrpdu.mongodb.net/${databaseConfig.dbName}?retryWrites=true&w=majority`
 const dbOptions: ConnectOptions = {
   autoIndex: true
@@ -16,7 +15,7 @@ const connectDatabase = async () => {
     await mongoose.connect(databaseUrl, dbOptions)
     logger.info(`Database connected with ${environment === 'development' ? 'local database' : 'cloud database'}`)
   } catch (error) {
-    logger.info('Error connecting to MongoDB:', error)
+    logger.error('Error connecting to MongoDB:', error)
   }
 }
 export default connectDatabase

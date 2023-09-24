@@ -4,7 +4,7 @@ import winston from 'winston'
 const { colorize, combine, printf, timestamp } = winston.format
 
 const myFormat = printf(({ level, message, timestamp }) => {
-  const logMessage = cliColor.bgBlue.white(`Time:=>${timestamp} Level:=>${level}  Message::==>>${message}`)
+  const logMessage = cliColor.bgBlack.white(`Time:=>${timestamp} Level:=>${level}  Message::==>>${message}`)
   return logMessage
 })
 

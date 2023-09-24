@@ -1,6 +1,7 @@
-export const PORT = 8000
+export const PORT = process.env.PORT
 
-export const environment = process.env.environment
+export const environment = process.env.environment as string
+export const localDbUrl = process.env.MONGODB_URI as string
 
 export const secretTokenKey = process.env.tokenSecretkey
 

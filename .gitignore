@@ -12,11 +12,10 @@ out/
 
 # Dependency lock files
 package-lock.json
-yarn.lock
+
 
 # IDE/Editor files
 .idea/
-.vscode/
 *.sublime-project
 *.sublime-workspace
 *.suo
