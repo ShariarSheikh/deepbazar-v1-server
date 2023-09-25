@@ -13,8 +13,8 @@ router.get('/api/health', (_req, res) => {
   res.status(200).json({
     Author: {
       name: 'Shariar Sheikh',
-      Headline: 'Frontend Focused Full-Stack Developer',
-      linkedin: 'https://www.linkedin.com/in/sheikhshariar/'
+      Headline: 'Software Engineer',
+      picture: 'https://www.linkedin.com/in/sheikhshariar/'
     }
   })
 })
