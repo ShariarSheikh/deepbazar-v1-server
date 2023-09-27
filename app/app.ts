@@ -1,8 +1,8 @@
 import Express from 'express'
-import connectDatabase from './config/database'
-import { GlobalErrorHandler, NotFoundRouteErrorHandler } from './core/ErrorHandler'
 import rootMiddleware from './middleware/rootMiddleware'
 import router from './routes'
+import connectDatabase from './config/database'
+import { GlobalErrorHandler, NotFoundRouteErrorHandler } from './core/ErrorHandler'
 
 const app = Express()
 

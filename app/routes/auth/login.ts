@@ -23,8 +23,20 @@ loginRoute.post(
     const match = await bcrypt.compare(password, user.password)
     if (!match) return response.badRequest('Authentication failure')
 
-    const accessToken = createToken({ userName: user.name, email: user.email })
-    const userInfo = _.pick(user, ['_id', 'name', 'email', 'profileImageUrl'])
+    const accessToken = createToken({ userName: user.firstName, email: user.email })
+    const userInfo = _.pick(user, [
+      '_id',
+      'firstName',
+      'lastName',
+      'imgUrl',
+      'email',
+      'userType',
+      'isCustomAccount',
+      'address',
+      'zipCode',
+      'bio',
+      'socialLinks'
+    ])
 
     return response.success({ user: userInfo, accessToken })
   })

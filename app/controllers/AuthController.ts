@@ -1,11 +1,4 @@
-import AuthModel from '../models/Auth.Model'
-
-interface UserRegisterData {
-  email: string
-  password: string
-  name: string
-  profileImageUrl: string
-}
+import AuthModel, { IAuth } from '../models/Auth.Model'
 
 interface LoginPropsData {
   email: string
@@ -13,17 +6,11 @@ interface LoginPropsData {
 }
 
 class AuthController {
-  public async findUserWithEmail(email: string) {
+  public async findUserWithEmail(email: string): Promise<IAuth | null> {
     return await AuthModel.findOne({ email })
   }
-
-  public async login({ email, password }: LoginPropsData) {
-    return await AuthModel.findOne({ email })
-  }
-
-  public async createUser(body: UserRegisterData) {
-    const { name, email, password, profileImageUrl } = body
-    return await AuthModel.create({ name, email, password, profileImageUrl })
+  public async createUser(user: IAuth) {
+    return await AuthModel.create(user)
   }
 }
 
