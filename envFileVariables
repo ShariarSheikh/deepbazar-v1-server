@@ -1,8 +1,14 @@
-  environment = development
+  # tokens
+  secretAccessKey = 
+  secretRefreshKey = 
 
-  tokenSecretkey = 
 
-  mongoDbUserName= 
-  mongoDbpassword= 
-  mongoDbcluster= 
-  mongoDbDatabaseName= 
+ # mongodb cloud configs
+  mongoDbUserName = 
+  mongoDbpassword =
+  mongoDbcluster = 
+  mongoDbDatabaseName = 
+
+
+ # api key
+  ApiKey = 

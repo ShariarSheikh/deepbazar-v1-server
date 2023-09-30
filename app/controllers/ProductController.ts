@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import ProductModel, { IProject } from '../models/Product.Model'
 
 class ProductController {
@@ -25,6 +26,10 @@ class ProductController {
 
   public async delete(deleteId: string) {
     return await ProductModel.findByIdAndDelete(deleteId)
+  }
+
+  public async deleteAllProductByUserId(userId: mongoose.Schema.Types.ObjectId) {
+    return await ProductModel.deleteMany({ sellerId: userId })
   }
 }
 
