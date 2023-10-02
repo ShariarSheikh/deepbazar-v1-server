@@ -9,7 +9,7 @@ class AuthController {
     return await AuthModel.findById(id)
   }
   public async findUserWithIdAndUpdate(id: mongoose.Schema.Types.ObjectId, profile: IAuth) {
-    return await AuthModel.findByIdAndUpdate(id, profile)
+    return await AuthModel.findByIdAndUpdate(id, profile, { new: true })
   }
 
   public async createUser(user: IAuth) {

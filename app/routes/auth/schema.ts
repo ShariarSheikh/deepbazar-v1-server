@@ -2,7 +2,7 @@ import Joi from 'joi'
 import { Role } from '../../models/Auth.Model'
 import { Types } from 'mongoose'
 
-const JoiObjectId = () =>
+export const JoiObjectId = () =>
   Joi.string().custom((value: string, helpers) => {
     if (!Types.ObjectId.isValid(value)) return helpers.error('any.invalid')
     return value

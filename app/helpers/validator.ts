@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
 import Joi from 'joi'
-import { Types } from 'mongoose'
 import ApiResponse from '../core/ApiResponse'
 import logger from '../core/Logger'
 

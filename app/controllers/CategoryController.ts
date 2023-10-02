@@ -10,7 +10,7 @@ class CategoryController {
   }
 
   public async updateById({ id, category }: { id: string; category: ICategory }) {
-    return await CategoriesModel.findByIdAndUpdate(id, category)
+    return await CategoriesModel.findByIdAndUpdate(id, category, { new: true })
   }
 }
 
