@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import bcrypt from 'bcrypt'
 import express, { NextFunction, Request, Response } from 'express'
 import _ from 'lodash'
 import AuthController from '../../controllers/AuthController'
 import ApiResponse from '../../core/ApiResponse'
 import validator, { ValidationSource } from '../../helpers/validator'
-import { paramId, loginSchema, updateSchema, updatePasswordSchema } from './schema'
+import { paramId, loginSchema, updateSchema, updatePasswordSchema, refreshTokenSchema } from './schema'
 import { createSchema } from './schema'
 import asyncHandler from '../../helpers/asyncHandler'
 import authenticate from '../../auth/authenticate'
-import { createAccessToken, createRefreshToken, makePasswordHash } from '../../auth/utils'
+import { createAccessToken, createRefreshToken, makePasswordHash, verifiedRefreshToken } from '../../auth/utils'
 import TokenController from '../../controllers/TokenController'
 import ProductController from '../../controllers/ProductController'
 import { Role } from '../../models/Auth.Model'
@@ -29,7 +28,7 @@ authRoute.post(
     const match = await bcrypt.compare(password, user.password)
     if (!match) return response.badRequest('Authentication failure')
 
-    const accessToken = createAccessToken({ _id: user._id, role: user.role })
+    const accessToken = createAccessToken({ _id: user._id, role: user.role, email: user.email })
     const refreshToken = createRefreshToken({ _id: user._id, role: user.role })
 
     await TokenController.deleteByUserId(user?._id)
@@ -68,6 +67,26 @@ authRoute.post(
     await AuthController.createUser(req.body)
 
     return response.success()
+  })
+)
+
+authRoute.post(
+  '/refresh-token',
+  validator(refreshTokenSchema),
+  asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+    const response = new ApiResponse(res)
+
+    const decoded = verifiedRefreshToken(req.body.refreshToken)
+    //@ts-ignore
+    if (!decoded?._id) return response.unauthorized('Refresh Token invalid')
+
+    //@ts-ignore
+    const user = await AuthController.findUserWithId(decoded?._id)
+    if (!user?.email) return response.unauthorized()
+
+    const accessToken = createAccessToken({ _id: user._id, role: user.role, email: user.email })
+
+    return response.success({ accessToken }, 'Your new access token created')
   })
 )
 

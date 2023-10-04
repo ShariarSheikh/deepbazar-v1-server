@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import ApiResponse from '../core/ApiResponse'
 import { NextFunction, Request, Response, Router } from 'express'
-import { verifiedRefreshToken } from './utils'
+import { verifiedAccessToken } from './utils'
 import AuthController from '../controllers/AuthController'
 import asyncHandler from '../helpers/asyncHandler'
-import TokenController from '../controllers/TokenController'
 import validator, { ValidationSource } from '../helpers/validator'
 import schema from './schema'
 
@@ -17,15 +15,15 @@ authenticate.use(
     const accessTokenHeader = req.headers['authorization']
 
     const token = accessTokenHeader?.split(' ')[1]
-    if (token == null) return response.unauthorized()
+    if (token == null) return response.forbidden('Invalid Token')
 
-    const decoded = verifiedRefreshToken(token)
-    const isExitsToken = await TokenController.findByToken(token)
-    if (isExitsToken == null) response.unauthorized()
+    const decoded = verifiedAccessToken(token)
+    //@ts-ignore
+    if (!decoded?._id) response.forbidden('Invalid Token')
 
     //@ts-ignore
     const user = await AuthController.findUserWithId(decoded?._id)
-    if (!user?.email) return response.unauthorized()
+    if (!user?.email) return response.forbidden('Invalid Token')
 
     //@ts-ignore
     req.user = user

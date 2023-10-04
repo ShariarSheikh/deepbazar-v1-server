@@ -80,3 +80,7 @@ export const updatePasswordSchema = Joi.object({
   oldPassword: Joi.string().min(6).max(100),
   newPassword: Joi.string().min(6).max(100)
 })
+
+export const refreshTokenSchema = Joi.object({
+  refreshToken: Joi.string().required()
+})
