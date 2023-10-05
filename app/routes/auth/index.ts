@@ -34,23 +34,7 @@ authRoute.post(
     await TokenController.deleteByUserId(user?._id)
     await TokenController.create(refreshToken, user?._id)
 
-    return response.success({
-      user: _.pick(user, [
-        '_id',
-        'firstName',
-        'lastName',
-        'imgUrl',
-        'email',
-        'role',
-        'isCustomAccount',
-        'address',
-        'zipCode',
-        'bio',
-        'socialLinks'
-      ]),
-      accessToken,
-      refreshToken
-    })
+    return response.success({ accessToken, refreshToken })
   })
 )
 
@@ -152,6 +136,35 @@ authRoute.patch(
     await AuthController.findUserWithIdAndUpdate(user._id, { password: newPassword })
 
     return response.success('Successfully updated your profile')
+  })
+)
+
+authRoute.get(
+  '/profile',
+  asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+    const response = new ApiResponse(res)
+
+    //@ts-ignore
+    const user = await AuthController.findUserWithId(req.user?._id)
+    if (!user?.email) return response.badRequest('User not found')
+
+    await AuthController.findUserWithIdAndUpdate(user._id, req.body)
+
+    return response.success({
+      user: _.pick(user, [
+        '_id',
+        'firstName',
+        'lastName',
+        'imgUrl',
+        'email',
+        'role',
+        'isCustomAccount',
+        'address',
+        'zipCode',
+        'bio',
+        'socialLinks'
+      ])
+    })
   })
 )
 
