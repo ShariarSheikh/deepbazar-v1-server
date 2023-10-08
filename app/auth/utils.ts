@@ -1,8 +1,8 @@
-import { SECRET_ACCESS_TOKEN_KEY, SECRET_REFRESH_TOKEN_KEY } from '../config/variables.config'
-import jwt from 'jsonwebtoken'
-import { RoleType } from '../models/Auth.Model'
-import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose'
+import { SECRET_ACCESS_TOKEN_KEY, SECRET_REFRESH_TOKEN_KEY } from '../config/variables.config'
+import { RoleType } from '../models/Auth.Model'
 
 interface CreateAccessTokenProps {
   _id: mongoose.Schema.Types.ObjectId
@@ -16,7 +16,7 @@ interface CreateRefreshTokenProps {
 //ACCESS TOKEN---------------------------------
 export function createAccessToken(payload: CreateAccessTokenProps) {
   return jwt.sign(payload, SECRET_ACCESS_TOKEN_KEY, {
-    expiresIn: '15m'
+    expiresIn: '5m'
   })
 }
 export function verifiedAccessToken(token: string) {

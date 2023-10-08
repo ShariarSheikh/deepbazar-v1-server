@@ -1,17 +1,16 @@
 import bcrypt from 'bcrypt'
 import express, { NextFunction, Request, Response } from 'express'
 import _ from 'lodash'
-import AuthController from '../../controllers/AuthController'
-import ApiResponse from '../../core/ApiResponse'
-import validator, { ValidationSource } from '../../helpers/validator'
-import { paramId, loginSchema, updateSchema, updatePasswordSchema, refreshTokenSchema } from './schema'
-import { createSchema } from './schema'
-import asyncHandler from '../../helpers/asyncHandler'
 import authenticate from '../../auth/authenticate'
 import { createAccessToken, createRefreshToken, makePasswordHash, verifiedRefreshToken } from '../../auth/utils'
-import TokenController from '../../controllers/TokenController'
+import AuthController from '../../controllers/AuthController'
 import ProductController from '../../controllers/ProductController'
+import TokenController from '../../controllers/TokenController'
+import ApiResponse from '../../core/ApiResponse'
+import asyncHandler from '../../helpers/asyncHandler'
+import validator, { ValidationSource } from '../../helpers/validator'
 import { Role } from '../../models/Auth.Model'
+import { createSchema, loginSchema, paramId, refreshTokenSchema, updatePasswordSchema, updateSchema } from './schema'
 
 const authRoute = express.Router()
 
