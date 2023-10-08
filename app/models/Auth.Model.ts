@@ -15,6 +15,7 @@ export interface IAuth extends Document {
   password: string
   imgUrl?: string
   role: RoleType[]
+  verified: boolean
   isCustomAccount: boolean
   address?: string
   zipCode?: number
@@ -37,6 +38,7 @@ const AuthSchema = new Schema<IAuth>(
     password: { type: String, required: true },
     imgUrl: { type: String },
     role: { type: [String], enum: Object.values(Role), required: true },
+    verified: { type: Boolean, default: false },
     isCustomAccount: { type: Boolean, required: true },
     address: { type: String },
     zipCode: { type: Number },
