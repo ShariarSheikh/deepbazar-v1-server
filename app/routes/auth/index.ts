@@ -84,7 +84,7 @@ authRoute.delete(
     const response = new ApiResponse(res)
 
     //@ts-ignore
-    const user = await AuthController.findUserWithId(req.user?._id)
+    const user = await AuthController.findUserWithId(req.params.id)
     if (!user?.email) return response.badRequest('User not found')
 
     await AuthController.deleteUser(user._id)
@@ -106,7 +106,7 @@ authRoute.patch(
     const response = new ApiResponse(res)
 
     //@ts-ignore
-    const user = await AuthController.findUserWithId(req.user?._id)
+    const user = await AuthController.findUserWithId(req.params.id)
     if (!user?.email) return response.badRequest('User not found')
 
     await AuthController.findUserWithIdAndUpdate(user._id, req.body)
@@ -123,7 +123,7 @@ authRoute.patch(
     const response = new ApiResponse(res)
 
     //@ts-ignore
-    const user = await AuthController.findUserWithId(req.user?._id)
+    const user = await AuthController.findUserWithId(req.params.id)
     if (!user?.email) return response.badRequest('User not found')
 
     const match = await bcrypt.compare(req.body.oldPassword, user.password)
