@@ -8,8 +8,8 @@ const dbOptions: ConnectOptions = {
   autoIndex: true
 }
 
-// const databaseUrl = environment === 'development' ? localDbUrl : cloudDbUrl
-const databaseUrl = cloudDbUrl
+const databaseUrl = environment === 'development' ? localDbUrl : cloudDbUrl
+// const databaseUrl = cloudDbUrl
 
 const connectDatabase = async () => {
   try {
