@@ -11,6 +11,9 @@ import asyncHandler from '../../helpers/asyncHandler'
 import validator, { ValidationSource } from '../../helpers/validator'
 import { Role } from '../../models/Auth.Model'
 import { createSchema, loginSchema, paramId, refreshTokenSchema, updatePasswordSchema, updateSchema } from './schema'
+import upload from '../../middleware/multer'
+import removeImgFile from '../../helpers/removeImgFile'
+import { deleteImgFromCloudinary, uploadImgToCloudinary } from '../../helpers/cloudinaryUtils'
 
 const authRoute = express.Router()
 
@@ -98,10 +101,11 @@ authRoute.delete(
   })
 )
 
-authRoute.patch(
+authRoute.put(
   '/update/:id',
   validator(paramId, ValidationSource.PARAM),
   validator(updateSchema),
+  upload.single('imgUrl'),
   asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -109,13 +113,42 @@ authRoute.patch(
     const user = await AuthController.findUserWithId(req.params.id)
     if (!user?.email) return response.badRequest('User not found')
 
-    await AuthController.findUserWithIdAndUpdate(user._id, req.body)
+    if (req.file?.fieldname) {
+      const filePath = `uploads/${req.file?.filename}`
+      const uploadLink = await uploadImgToCloudinary({
+        filePath,
+        fileName: req.file.filename,
+        folder: 'userprofilePictures'
+      })
 
-    return response.success('Successfully updated your profile')
+      await removeImgFile(filePath)
+      if (uploadLink?.url) req.body.imgUrl = uploadLink.url
+
+      //IF USER ALREADY HAVE PROFILE IMG URL THEN DELETE OLD ONE
+      if (user.imgUrl && user.imgPublicId) await deleteImgFromCloudinary(user.imgPublicId)
+    }
+
+    const updatedUser = await AuthController.findUserWithIdAndUpdate(user._id, req.body)
+
+    return response.success({
+      user: _.pick(updatedUser, [
+        '_id',
+        'firstName',
+        'lastName',
+        'imgUrl',
+        'email',
+        'role',
+        'isCustomAccount',
+        'address',
+        'zipCode',
+        'bio',
+        'socialLinks'
+      ])
+    })
   })
 )
 
-authRoute.patch(
+authRoute.put(
   '/update-password/:id',
   validator(paramId, ValidationSource.PARAM),
   validator(updatePasswordSchema),
@@ -133,7 +166,6 @@ authRoute.patch(
 
     //@ts-ignore
     await AuthController.findUserWithIdAndUpdate(user._id, { password: newPassword })
-
     return response.success('Successfully updated your profile')
   })
 )

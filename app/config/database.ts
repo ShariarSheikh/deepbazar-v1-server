@@ -1,6 +1,7 @@
 import mongoose, { ConnectOptions } from 'mongoose'
+import cloudinary from 'cloudinary'
 import logger from '../core/Logger'
-import { databaseConfig, environment, localDbUrl } from './variables.config'
+import { cloudinaryConfig, databaseConfig, environment, localDbUrl } from './variables.config'
 
 // DB variables
 const cloudDbUrl = `mongodb+srv://${databaseConfig.username}:${databaseConfig.password}@${databaseConfig.cluster}.ebdrpdu.mongodb.net/${databaseConfig.dbName}?retryWrites=true&w=majority`
@@ -19,4 +20,15 @@ const connectDatabase = async () => {
     logger.error('Error connecting to MongoDB:', error)
   }
 }
+
 export default connectDatabase
+
+// CLOUDINARY DATABASE CONFIG
+export function connectToCloudinary() {
+  return cloudinary.v2.config({
+    cloud_name: cloudinaryConfig.cloud_name,
+    api_key: cloudinaryConfig.api_key,
+    api_secret: cloudinaryConfig.api_secret,
+    secure: true
+  })
+}

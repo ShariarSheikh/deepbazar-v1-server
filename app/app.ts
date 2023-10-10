@@ -1,13 +1,14 @@
 import Express from 'express'
 import rootMiddleware from './middleware/rootMiddleware'
 import router from './routes'
-import connectDatabase from './config/database'
+import connectDatabase, { connectToCloudinary } from './config/database'
 import { GlobalErrorHandler, NotFoundRouteErrorHandler } from './core/ErrorHandler'
 
 const app = Express()
 
 // Database connect
 connectDatabase()
+connectToCloudinary()
 
 //Middleware
 app.use(rootMiddleware.jsonParser, rootMiddleware.urlencoded, rootMiddleware.corsUrl)

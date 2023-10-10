@@ -15,6 +15,15 @@ export const JoiAuthBearer = () =>
     return value
   }, 'Authorization Header Validation')
 
+const imgFile = Joi.object({
+  mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/gif').required(),
+
+  // Limit the file size to a reasonable value (e.g., 5MB)
+  size: Joi.number()
+    .max(5 * 1024 * 1024)
+    .required()
+}).optional()
+
 export const createSchema = Joi.object({
   firstName: Joi.string().required().min(3).max(50),
   lastName: Joi.string().required().min(3).max(50),
@@ -55,7 +64,7 @@ export const updateSchema = Joi.object({
   firstName: Joi.string().min(3).max(50),
   lastName: Joi.string().min(3).max(50),
   email: Joi.string().email().max(200),
-  imgUrl: Joi.string().optional().uri().allow(''),
+  imgUrl: imgFile,
   role: Joi.string()
     .valid(...Object.values(Role))
     .messages({
