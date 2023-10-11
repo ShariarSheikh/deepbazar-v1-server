@@ -1,7 +1,7 @@
 import multer from 'multer'
 import fs from 'fs'
 
-export const fileUploadFolderPath = './tmp'
+export const fileUploadFolderPath = '/tmp/'
 
 if (!fs.existsSync(fileUploadFolderPath)) {
   fs.mkdirSync(fileUploadFolderPath)
