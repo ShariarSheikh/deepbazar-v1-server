@@ -90,6 +90,8 @@ authRoute.delete(
     const user = await AuthController.findUserWithId(req.params.id)
     if (!user?.email) return response.badRequest('User not found')
 
+    if (user.imgUrl && user.imgPublicId) await deleteImgFromCloudinary(user.imgPublicId)
+
     await AuthController.deleteUser(user._id)
     await TokenController.deleteByUserId(user._id)
 
