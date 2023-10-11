@@ -1,10 +1,10 @@
 import multer from 'multer'
 
-export const fileFolderPath = 'uploads/'
+export const fileUploadFolderPath = './tmp'
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, fileFolderPath)
+    cb(null, fileUploadFolderPath)
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '--' + file.originalname)

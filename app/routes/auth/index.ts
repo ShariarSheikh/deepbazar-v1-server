@@ -11,7 +11,7 @@ import asyncHandler from '../../helpers/asyncHandler'
 import validator, { ValidationSource } from '../../helpers/validator'
 import { Role } from '../../models/Auth.Model'
 import { createSchema, loginSchema, paramId, refreshTokenSchema, updatePasswordSchema, updateSchema } from './schema'
-import upload from '../../middleware/multer'
+import upload, { fileUploadFolderPath } from '../../middleware/multer'
 import removeImgFile from '../../helpers/removeImgFile'
 import { deleteImgFromCloudinary, uploadImgToCloudinary } from '../../helpers/cloudinaryUtils'
 
@@ -114,7 +114,7 @@ authRoute.put(
     if (!user?.email) return response.badRequest('User not found')
 
     if (req.file?.fieldname) {
-      const filePath = `uploads/${req.file?.filename}`
+      const filePath = `${fileUploadFolderPath}/${req.file?.filename}`
       const uploadLink = await uploadImgToCloudinary({
         filePath,
         fileName: req.file.filename,
