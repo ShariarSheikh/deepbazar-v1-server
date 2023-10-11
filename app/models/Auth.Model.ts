@@ -38,7 +38,7 @@ const AuthSchema = new Schema<IAuth>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     imgUrl: { type: String },
-    imgPublicId: { type: String },
+    imgPublicId: { type: String, default: '' },
     role: { type: [String], enum: Object.values(Role), required: true },
     verified: { type: Boolean, default: false },
     isCustomAccount: { type: Boolean, required: true },

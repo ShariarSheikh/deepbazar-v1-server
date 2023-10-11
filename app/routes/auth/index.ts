@@ -122,7 +122,10 @@ authRoute.put(
       })
 
       await removeImgFile(filePath)
-      if (uploadLink?.url) req.body.imgUrl = uploadLink.url
+      if (uploadLink?.url) {
+        req.body.imgUrl = uploadLink.url
+        req.body.imgPublicId = uploadLink.public_id
+      }
 
       //IF USER ALREADY HAVE PROFILE IMG URL THEN DELETE OLD ONE
       if (user.imgUrl && user.imgPublicId) await deleteImgFromCloudinary(user.imgPublicId)
