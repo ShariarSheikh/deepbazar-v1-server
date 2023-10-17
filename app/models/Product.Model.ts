@@ -18,7 +18,6 @@ export type ProductSectionNameType = (typeof ProductSectionName)[keyof typeof Pr
 export interface IProject extends Document {
   title: string
   productCode: string
-  productId: string
   status: ProductStatusType
   category: string[]
   productSectionName: ProductSectionNameType
@@ -41,32 +40,35 @@ export interface IProject extends Document {
 
   images: Array<{
     isDefault: boolean
+    publicId: string
     defaultImg: string
     cardImg: string
     displayImg: string
     commentImg: string
+    smallImg: string
   }>
 
   description: string
-  specification?: string
+  specification: string
   tags: string[]
+  createdAt: Date
+  updatedAt: Date
 }
 
 const productSchema = new Schema(
   {
     title: { type: String, required: true, unique: true },
     productCode: { type: String, required: true, unique: true },
-    productId: { type: String, required: true, unique: true },
-    status: { type: String, enum: Object.values(ProductStatus), required: true },
+    status: { type: String, enum: Object.values(ProductStatus), required: true, default: ProductStatus.Pending },
     category: { type: [String], required: true },
     productSectionName: { type: String, enum: Object.values(ProductSectionName), required: true },
     sellerId: { type: Schema.Types.ObjectId, required: true },
     ratings: {
-      star: { type: Number, required: true },
-      totalReviews: { type: Number, required: true }
+      star: { type: Number, required: true, default: 0 },
+      totalReviews: { type: Number, required: true, default: 0 }
     },
-    totalAnswers: { type: Number, required: true },
-    totalWishlist: { type: Number, required: true },
+    totalAnswers: { type: Number, required: true, default: 0 },
+    totalWishlist: { type: Number, required: true, default: 0 },
     price: { type: Number, required: true },
     discountPrice: { type: Number },
     discountPercent: { type: Number },
@@ -78,7 +80,9 @@ const productSchema = new Schema(
         defaultImg: { type: String, required: true },
         cardImg: { type: String, required: true },
         displayImg: { type: String, required: true },
-        commentImg: { type: String, required: true }
+        commentImg: { type: String, required: true },
+        smallImg: { type: String, required: true },
+        publicId: { type: String, required: true }
       }
     ],
     description: { type: String, required: true },

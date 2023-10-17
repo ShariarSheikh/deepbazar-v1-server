@@ -14,5 +14,10 @@
   api_key= 
   api_secret= 
 
+  cloudinaryProfileImgFolder = 
+  cloudinaryProductImgFolder = 
+  
+
+
  # api key
   ApiKey = 

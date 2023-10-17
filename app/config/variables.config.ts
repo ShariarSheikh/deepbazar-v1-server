@@ -19,4 +19,7 @@ export const cloudinaryConfig = {
   api_secret: process.env.api_secret as string
 }
 
+export const cloudinaryProfileImgFolder = process.env.cloudinaryProfileImgFolder as string
+export const cloudinaryProductImgFolder = process.env.cloudinaryProductImgFolder as string
+
 export const serverAccessApiKey = process.env.ApiKey as string

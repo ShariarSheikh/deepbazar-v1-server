@@ -16,15 +16,15 @@ class ProductController {
     return await ProductModel.find(query).limit(limit)
   }
 
+  public async listBySellerId(query: { sellerId: string; limit: number }) {
+    const { sellerId, limit } = query
+
+    return await ProductModel.find({ sellerId: sellerId }).limit(limit)
+  }
+
   public async detailsByProductId(id: mongoose.Schema.Types.ObjectId) {
     return await ProductModel.findById(id)
   }
-
-  // public async search(searchQuery: string) {
-  //   return await ProductModel.find({
-  //     $or: [{ title: { $regex: searchQuery, $options: 'i' } }, { description: { $regex: searchQuery, $options: 'i' } }]
-  //   })
-  // }
 
   public async create(project: IProject) {
     return await ProductModel.create(project)

@@ -4,21 +4,11 @@ import { ProductSectionName, ProductSectionNameType, ProductStatus } from '../..
 export const productCreateSchema = Joi.object({
   title: Joi.string().required().min(5).max(400),
   productCode: Joi.string().required().min(5),
-  productId: Joi.string().required(),
-  status: Joi.string()
-    .valid(...Object.values(ProductStatus))
-    .required(),
-  category: Joi.array().items(Joi.string()).required(),
+  category: Joi.array().items(Joi.string()).min(1).required(),
   productSectionName: Joi.string()
     .valid(...Object.values(ProductSectionName))
     .required(),
   sellerId: Joi.string().required(),
-  ratings: Joi.object({
-    star: Joi.number().required(),
-    totalReviews: Joi.number().required()
-  }).required(),
-  totalAnswers: Joi.number().required(),
-  totalWishlist: Joi.number().required(),
   price: Joi.number().required().min(1),
   discountPrice: Joi.number().allow(0),
   discountPercent: Joi.number().min(1).max(99).allow(0),
@@ -26,11 +16,8 @@ export const productCreateSchema = Joi.object({
   inStock: Joi.boolean().required(),
   images: Joi.array().items(
     Joi.object({
-      isDefault: Joi.boolean().required(),
-      defaultImg: Joi.string().required(),
-      cardImg: Joi.string().required(),
-      displayImg: Joi.string().required(),
-      commentImg: Joi.string().required()
+      path: Joi.string().required(),
+      preview: Joi.string().required()
     })
   ),
   description: Joi.string().required().min(10),
@@ -41,8 +28,9 @@ export const productCreateSchema = Joi.object({
 export const productUpdateSchema = Joi.object({
   title: Joi.string().min(5).max(400),
   productCode: Joi.string().min(5),
-  productId: Joi.string(),
-  status: Joi.string().valid(...Object.values(ProductStatus)),
+  status: Joi.string()
+    .valid(...Object.values(ProductStatus))
+    .allow(''),
   category: Joi.array().items(Joi.string()),
   productSectionName: Joi.string()
     .valid(...Object.values(ProductSectionName))
@@ -61,12 +49,13 @@ export const productUpdateSchema = Joi.object({
   inStock: Joi.boolean(),
   images: Joi.array().items(
     Joi.object({
-      isDefault: Joi.boolean(),
-      defaultImg: Joi.string(),
-      cardImg: Joi.string(),
-      displayImg: Joi.string(),
-      commentImg: Joi.string()
-    })
+      mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/gif').required(),
+
+      // Limit the file size to a reasonable value (e.g., 5MB)
+      size: Joi.number()
+        .max(5 * 1024 * 1024)
+        .required()
+    }).required()
   ),
   description: Joi.string().min(10).allow(''),
   specification: Joi.string().allow(''),

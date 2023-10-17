@@ -11,9 +11,8 @@ import asyncHandler from '../../helpers/asyncHandler'
 import validator, { ValidationSource } from '../../helpers/validator'
 import { Role } from '../../models/Auth.Model'
 import { createSchema, loginSchema, paramId, refreshTokenSchema, updatePasswordSchema, updateSchema } from './schema'
-import upload, { fileUploadFolderPath } from '../../middleware/multer'
-import removeImgFile from '../../helpers/removeImgFile'
-import { deleteImgFromCloudinary, uploadImgToCloudinary } from '../../helpers/cloudinaryUtils'
+import upload from '../../middleware/multer'
+import { deleteImgFromCloudinary, uploadProfileImg } from '../../helpers/cloudinaryUtils'
 
 const authRoute = express.Router()
 
@@ -116,18 +115,10 @@ authRoute.put(
     if (!user?.email) return response.badRequest('User not found')
 
     if (req.file?.fieldname) {
-      const filePath = `${fileUploadFolderPath}/${req.file?.filename}`
-      const uploadLink = await uploadImgToCloudinary({
-        filePath,
-        fileName: req.file.filename,
-        folder: 'userprofilePictures'
-      })
+      const imgData = await uploadProfileImg({ file: req.file })
 
-      await removeImgFile(filePath)
-      if (uploadLink?.url) {
-        req.body.imgUrl = uploadLink.url
-        req.body.imgPublicId = uploadLink.public_id
-      }
+      req.body.imgUrl = imgData.imgUrl
+      req.body.imgPublicId = imgData.publicId
 
       //IF USER ALREADY HAVE PROFILE IMG URL THEN DELETE OLD ONE
       if (user.imgUrl && user.imgPublicId) await deleteImgFromCloudinary(user.imgPublicId)
