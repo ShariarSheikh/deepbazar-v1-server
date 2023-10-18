@@ -1,5 +1,4 @@
 import cloudinary from 'cloudinary'
-import productImageSizes, { profileImageSize } from './productImageSizes'
 import { cloudinaryProductImgFolder, cloudinaryProfileImgFolder } from '../config/variables.config'
 import removeImgFile from './removeImgFile'
 import { fileUploadFolderPath } from '../middleware/multer'
@@ -79,4 +78,24 @@ export async function uploadProfileImg({ file }: UploadProfileImg): Promise<Uplo
 
 export async function deleteImgFromCloudinary(publicId: string) {
   return await cloudinary.v2.uploader.destroy(publicId)
+}
+
+// IMAGE CUSTOMIZATION SIZE FUNCTION----------------------
+interface IReturn {
+  width: number
+  height: number
+  format: string
+}
+
+function productImageSizes(): IReturn[] {
+  return [
+    { width: 450, height: 450, format: 'webp' }, // details page image
+    { width: 300, height: 300, format: 'webp' }, // card image
+    { width: 75, height: 75, format: 'webp' }, // card small
+    { width: 40, height: 40, format: 'webp' } // comment
+  ]
+}
+
+function profileImageSize(): IReturn[] {
+  return [{ width: 120, height: 120, format: 'webp' }]
 }

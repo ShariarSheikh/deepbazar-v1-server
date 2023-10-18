@@ -4,14 +4,14 @@ import ProductController from '../../controllers/ProductController'
 import ApiResponse from '../../core/ApiResponse'
 import validator, { ValidationSource } from '../../helpers/validator'
 import { ProductFilterBy, categoryQuerySchema, productCreateSchema, productUpdateSchema } from './schema'
-import { paramId } from '../../routes/auth/schema'
+import { paramId } from '../../routes/profile/schema'
 import authenticate from '../../auth/authenticate'
 import checkRole from '../../helpers/checkRole'
 import { Role } from '../../models/Auth.Model'
 import authorization from '../../auth/authorization'
 import upload from '../../middleware/multer'
 import AuthController from '../../controllers/AuthController'
-import { uploadProductImages } from '../../helpers/cloudinaryUtils'
+import { deleteImgFromCloudinary, uploadProductImages } from '../../helpers/cloudinaryUtils'
 
 const productRoute = Router()
 
@@ -80,10 +80,12 @@ productRoute.get(
 
     const filteredProducts = products.map((product) => {
       return {
+        _id: product._id,
         createdAt: product.createdAt,
+        title: product.title,
         price: product.price,
         status: product.status,
-        images: product.images.find((img) => img.isDefault === true)?.smallImg
+        imgUrl: product.images.find((img) => img.isDefault === true)?.smallImg
       }
     })
 
@@ -114,7 +116,7 @@ productRoute.post(
   })
 )
 
-productRoute.patch(
+productRoute.put(
   '/update/:id',
   validator(paramId, ValidationSource.PARAM),
   validator(productUpdateSchema),
@@ -142,10 +144,11 @@ productRoute.delete(
 
     const updatedProduct = await ProductController.delete(req.params.id)
 
-    for (const imageUrl in updatedProduct?.images) {
-      // eslint-disable-next-line no-console
-      console.log(imageUrl)
-    }
+    updatedProduct?.images.map((imageData) => {
+      deleteImgFromCloudinary(imageData.publicId)
+    })
+
+    // after delete this product then delete the reviews and ans of this product below->
 
     return response.success(updatedProduct)
   })

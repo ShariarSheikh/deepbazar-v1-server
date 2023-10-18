@@ -3,7 +3,8 @@ import { Document, Schema, model } from 'mongoose'
 export const ProductStatus = {
   Pending: 'Pending',
   Approved: 'Active',
-  Testing: 'Testing'
+  Testing: 'Testing',
+  Rejected: 'Rejected'
 } as const
 
 export const ProductSectionName = {

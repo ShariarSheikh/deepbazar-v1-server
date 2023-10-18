@@ -3,6 +3,7 @@ import categoryRouter from './category'
 import authRoute from './auth'
 import apiKey from '../auth/apiKey'
 import productRoute from './product'
+import profileRoute from './profile'
 
 const router = Router()
 
@@ -22,6 +23,9 @@ router.use(apiKey)
 
 // Auth
 router.use('/api/auth', authRoute)
+
+// Auth
+router.use('/api/profile', profileRoute)
 
 //CATEGORY
 router.use('/api/category', categoryRouter)
