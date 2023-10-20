@@ -118,6 +118,7 @@ productRoute.post(
 
 productRoute.put(
   '/update/:id',
+  upload.array('images'),
   validator(paramId, ValidationSource.PARAM),
   validator(productUpdateSchema),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
@@ -126,6 +127,22 @@ productRoute.put(
     //@ts-ignore
     const product = await ProductController.detailsByProductId(req.params.id)
     if (!product?._id) return response.badRequest('Product not found')
+
+    if (!req.body.images?.length && !req.files?.length) return response.badRequest('Please upload image')
+
+    if (req.files?.length) {
+      //@ts-ignore
+      const images = await uploadProductImages({ files: req.files })
+      if (!images?.length) return response.badRequest('Image upload filed')
+
+      req.body.images = images
+    }
+    // if files exits that mean old image links have to delete and new files image have to upload
+    else {
+      product?.images.map((imageData) => {
+        deleteImgFromCloudinary(imageData.publicId)
+      })
+    }
 
     const updatedProduct = await ProductController.update({ id: product._id, product: req.body })
     return response.success(updatedProduct)
