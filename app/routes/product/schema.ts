@@ -47,15 +47,16 @@ export const productUpdateSchema = Joi.object({
   discountPercent: Joi.number().min(1).max(99).allow(0),
   offerText: Joi.string().allow(''),
   inStock: Joi.boolean(),
-  images: Joi.array().items(
-    Joi.object({
-      mimetype: Joi.string().valid('image/jpeg', 'image/png', 'image/gif').required(),
 
-      // Limit the file size to a reasonable value (e.g., 5MB)
-      size: Joi.number()
-        .max(5 * 1024 * 1024)
-        .required()
-    }).required()
+  //image files or image link, one of them should be exits condition
+  images: Joi.alternatives().try(
+    Joi.array().items(
+      Joi.object({
+        path: Joi.string().required(),
+        preview: Joi.string().required()
+      })
+    ),
+    Joi.array().items(Joi.string())
   ),
   description: Joi.string().min(10).allow(''),
   specification: Joi.string().allow(''),
