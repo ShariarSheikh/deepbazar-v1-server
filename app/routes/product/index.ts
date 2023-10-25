@@ -12,6 +12,7 @@ import authorization from '../../auth/authorization'
 import upload from '../../middleware/multer'
 import AuthController from '../../controllers/AuthController'
 import { deleteImgFromCloudinary, uploadProductImages } from '../../helpers/cloudinaryUtils'
+import updateProfileImageHandler from '../../helpers/updateProductImageHandler'
 
 const productRoute = Router()
 
@@ -44,6 +45,18 @@ productRoute.get(
     const products = await ProductController.listWithQuery(query)
 
     response.success({ query, totals: products.length, page: query.pageLength, products })
+  })
+)
+
+productRoute.get(
+  '/get-details-by-id/:id',
+  validator(paramId, ValidationSource.PARAM),
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const response = new ApiResponse(res)
+
+    //@ts-ignore
+    const product = await ProductController.detailsByProductId(req.params.id)
+    response.success(product)
   })
 )
 
@@ -120,29 +133,27 @@ productRoute.put(
   '/update/:id',
   upload.array('images'),
   validator(paramId, ValidationSource.PARAM),
-  validator(productUpdateSchema),
+  // validator(productUpdateSchema),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
     //@ts-ignore
     const product = await ProductController.detailsByProductId(req.params.id)
     if (!product?._id) return response.badRequest('Product not found')
+    if (!req.body.imagesLinks?.length && !req.files?.length) return response.badRequest('Please upload image')
 
-    if (!req.body.images?.length && !req.files?.length) return response.badRequest('Please upload image')
+    if (req.body.imagesLinks.length === 1 && !req.files?.length)
+      return response.badRequest('Minimum one image is required')
 
-    if (req.files?.length) {
-      //@ts-ignore
-      const images = await uploadProductImages({ files: req.files })
-      if (!images?.length) return response.badRequest('Image upload filed')
+    const images = await updateProfileImageHandler({
+      //@ts-expect-error
+      files: req.files,
+      imagesLinks: req.body.imagesLinks,
+      productImgInDatabase: product.images
+    })
 
-      req.body.images = images
-    }
-    // if files exits that mean old image links have to delete and new files image have to upload
-    else {
-      product?.images.map((imageData) => {
-        deleteImgFromCloudinary(imageData.publicId)
-      })
-    }
+    delete req.body.imagesLinks
+    req.body.images = images
 
     const updatedProduct = await ProductController.update({ id: product._id, product: req.body })
     return response.success(updatedProduct)

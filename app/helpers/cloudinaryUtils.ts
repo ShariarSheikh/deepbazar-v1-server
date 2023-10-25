@@ -2,21 +2,14 @@ import cloudinary from 'cloudinary'
 import { cloudinaryProductImgFolder, cloudinaryProfileImgFolder } from '../config/variables.config'
 import removeImgFile from './removeImgFile'
 import { fileUploadFolderPath } from '../middleware/multer'
+import { ProductImageType } from '../models/Product.Model'
 
 //--------------------------------------
 interface UploadProductImages {
   files: Express.Multer.File[]
 }
-interface UploadProductImagesReturn {
-  isDefault: boolean
-  defaultImg: string
-  cardImg: string
-  displayImg: string
-  commentImg: string
-  publicId: string
-}
 
-export async function uploadProductImages({ files }: UploadProductImages): Promise<UploadProductImagesReturn[]> {
+export async function uploadProductImages({ files }: UploadProductImages): Promise<ProductImageType[]> {
   const images = []
 
   // upload

@@ -4,7 +4,7 @@ import { ProductSectionName, ProductSectionNameType, ProductStatus } from '../..
 export const productCreateSchema = Joi.object({
   title: Joi.string().required().min(5).max(400),
   productCode: Joi.string().required().min(5),
-  category: Joi.array().items(Joi.string()).min(1).required(),
+  category: Joi.string().required(),
   productSectionName: Joi.string()
     .valid(...Object.values(ProductSectionName))
     .required(),
@@ -31,7 +31,7 @@ export const productUpdateSchema = Joi.object({
   status: Joi.string()
     .valid(...Object.values(ProductStatus))
     .allow(''),
-  category: Joi.array().items(Joi.string()),
+  category: Joi.string(),
   productSectionName: Joi.string()
     .valid(...Object.values(ProductSectionName))
     .allow(''),
@@ -49,14 +49,23 @@ export const productUpdateSchema = Joi.object({
   inStock: Joi.boolean(),
 
   //image files or image link, one of them should be exits condition
-  images: Joi.alternatives().try(
-    Joi.array().items(
-      Joi.object({
-        path: Joi.string().required(),
-        preview: Joi.string().required()
-      })
-    ),
-    Joi.array().items(Joi.string())
+  images: Joi.array().items(
+    Joi.object({
+      path: Joi.string().required(),
+      preview: Joi.string().required()
+    })
+  ),
+  imagesLinks: Joi.array().items(
+    Joi.object({
+      isDefault: Joi.boolean(),
+      publicId: Joi.string(),
+      defaultImg: Joi.string().uri(),
+      cardImg: Joi.string().uri(),
+      displayImg: Joi.string().uri(),
+      commentImg: Joi.string().uri(),
+      smallImg: Joi.string().uri(),
+      _id: Joi.string()
+    }).optional()
   ),
   description: Joi.string().min(10).allow(''),
   specification: Joi.string().allow(''),

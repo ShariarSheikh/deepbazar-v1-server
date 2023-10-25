@@ -16,11 +16,21 @@ export const ProductSectionName = {
 export type ProductStatusType = (typeof ProductStatus)[keyof typeof ProductStatus]
 export type ProductSectionNameType = (typeof ProductSectionName)[keyof typeof ProductSectionName]
 
+export interface ProductImageType {
+  isDefault: boolean
+  publicId: string
+  defaultImg: string
+  cardImg: string
+  displayImg: string
+  commentImg: string
+  smallImg: string
+}
+
 export interface IProject extends Document {
   title: string
   productCode: string
   status: ProductStatusType
-  category: string[]
+  category: string
   productSectionName: ProductSectionNameType
 
   sellerId: Schema.Types.ObjectId
@@ -39,15 +49,7 @@ export interface IProject extends Document {
   offerText?: string
   inStock: boolean
 
-  images: Array<{
-    isDefault: boolean
-    publicId: string
-    defaultImg: string
-    cardImg: string
-    displayImg: string
-    commentImg: string
-    smallImg: string
-  }>
+  images: ProductImageType[]
 
   description: string
   specification: string
@@ -61,7 +63,7 @@ const productSchema = new Schema(
     title: { type: String, required: true, unique: true },
     productCode: { type: String, required: true, unique: true },
     status: { type: String, enum: Object.values(ProductStatus), required: true, default: ProductStatus.Pending },
-    category: { type: [String], required: true },
+    category: { type: String, required: true },
     productSectionName: { type: String, enum: Object.values(ProductSectionName), required: true },
     sellerId: { type: Schema.Types.ObjectId, required: true },
     ratings: {

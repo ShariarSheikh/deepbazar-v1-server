@@ -16,6 +16,21 @@ import { deleteImgFromCloudinary, uploadProfileImg } from '../../helpers/cloudin
 
 const profileRoute = express.Router()
 
+profileRoute.get(
+  '/get-product-seller/:id',
+  asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+    const response = new ApiResponse(res)
+
+    //@ts-ignore
+    const user = await AuthController.findUserWithId(req.params.id)
+    if (!user?.email) return response.badRequest('User not found')
+
+    return response.success({
+      user: _.pick(user, ['_id', 'firstName', 'lastName', 'imgUrl', 'email', 'address', 'socialLinks'])
+    })
+  })
+)
+
 //--------------------------
 profileRoute.use(authenticate)
 //--------------------------
