@@ -42,9 +42,22 @@ productRoute.get(
     //@ts-ignore
     if (productSectionName) query.productSectionName = productSectionName
 
-    const products = await ProductController.listWithQuery(query)
+    const getProducts = await ProductController.listWithQuery(query)
 
-    response.success({ query, totals: products.length, page: query.pageLength, products })
+    const products = getProducts.map((product) => ({
+      _id: product._id,
+      title: product.title,
+      imgUrl: product.images[0].cardImg,
+      price: product.price,
+      discountPrice: product.discountPrice,
+      discountPercent: product.discountPercent,
+      offerText: product.offerText,
+      ratings: product.ratings,
+      inStock: product.inStock,
+      category: product.category
+    }))
+
+    response.success({ totals: products.length, products })
   })
 )
 
