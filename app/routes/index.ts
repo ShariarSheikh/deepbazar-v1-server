@@ -4,6 +4,7 @@ import authRoute from './auth'
 import apiKey from '../auth/apiKey'
 import productRoute from './product'
 import profileRoute from './profile'
+import reviewRoute from './review'
 
 const router = Router()
 
@@ -32,5 +33,8 @@ router.use('/api/category', categoryRouter)
 
 //PRODUCT
 router.use('/api/product', productRoute)
+
+//REVIEW
+router.use('/api/review', reviewRoute)
 
 export default router

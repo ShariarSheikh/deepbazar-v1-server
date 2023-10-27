@@ -43,10 +43,10 @@ export interface IProject extends Document {
   totalWishlist: number
 
   price: number
-  discountPrice?: number
-  discountPercent?: number
+  discountPrice: number
+  discountPercent: number
 
-  offerText?: string
+  offerText: string
   inStock: boolean
 
   images: ProductImageType[]
