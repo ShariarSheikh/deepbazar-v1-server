@@ -2,14 +2,14 @@ import { ProductImageType } from '../models/Product.Model'
 import { deleteImgFromCloudinary, uploadProductImages } from './cloudinaryUtils'
 
 interface UpdateProfileImageHandlerProps {
-  productImgInDatabase: ProductImageType[]
-  imagesLinks: ProductImageType[]
+  imgInDb: ProductImageType[]
+  imgInRequest: ProductImageType[]
   files: Express.Multer.File[]
 }
 
 export default async function updateProfileImageHandler({
-  imagesLinks,
-  productImgInDatabase,
+  imgInRequest,
+  imgInDb,
   files
 }: UpdateProfileImageHandlerProps) {
   const deletableImgs: string[] = []
@@ -21,32 +21,43 @@ export default async function updateProfileImageHandler({
   // IF DATABASE IMAGE DOSE'T EXIT IN BODY THEN REMOVE DATABASE IMAGES
 
   // if exits previews img of product
-  if (imagesLinks?.length > 0) {
-    productImgInDatabase.forEach((imgFromDatabase) => {
-      imagesLinks?.forEach((imgFromBody) => {
-        //FILTER DELETE-ABLE
-        if (imgFromDatabase.publicId !== imgFromBody.publicId) {
-          const isAlreadyPushThisImgToDeleteAbleList = deletableImgs.find(
-            (deletableImg) => deletableImg === imgFromDatabase.publicId
-          )
-          if (isAlreadyPushThisImgToDeleteAbleList) return
+  if (imgInRequest?.length > 0) {
+    // productImgInDatabase.forEach((imgFromDatabase) => {
+    //   imagesLinks?.forEach((imgFromBody) => {
+    //     //FILTER DELETE-ABLE
+    //     if (imgFromDatabase.publicId !== imgFromBody.publicId) {
+    //       const isAlreadyPushThisImgToDeleteAbleList = deletableImgs.find(
+    //         (deletableImg) => deletableImg === imgFromDatabase.publicId
+    //       )
+    //       console.log(imgFromDatabase.publicId, imgFromBody.publicId)
+    //       if (isAlreadyPushThisImgToDeleteAbleList) return
 
-          deletableImgs.push(imgFromDatabase.publicId)
-        }
+    //       deletableImgs.push(imgFromDatabase.publicId)
+    //     }
 
-        //NOT DELETE-ABLE
-        if (imgFromDatabase.publicId === imgFromBody.publicId) notDeletableImgs.push(imgFromDatabase)
-      })
+    //     //NOT DELETE-ABLE
+    //     if (imgFromDatabase.publicId === imgFromBody.publicId) notDeletableImgs.push(imgFromDatabase)
+    //   })
+    // })
+
+    imgInDb.forEach((dbImg) => {
+      const existsInRequest = imgInRequest.some((currentImg) => currentImg.publicId === dbImg.publicId)
+
+      if (existsInRequest) {
+        notDeletableImgs.push(dbImg)
+      } else {
+        deletableImgs.push(dbImg.publicId)
+      }
     })
-  } else if (files?.length && !imagesLinks?.length) {
-    productImgInDatabase.forEach((imgData) => {
+  } else if (files?.length && !imgInRequest?.length) {
+    imgInDb.forEach((imgData) => {
       deletableImgs.push(imgData.publicId)
     })
   }
 
   // REMOVE
-  deletableImgs.forEach((deleteAbleImgPublicId) => {
-    deleteImgFromCloudinary(deleteAbleImgPublicId)
+  deletableImgs.forEach((publicId) => {
+    deleteImgFromCloudinary(publicId)
   })
 
   // IF FILES EXITS IN REQUEST THEN UPDATE

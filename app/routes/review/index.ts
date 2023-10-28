@@ -46,11 +46,7 @@ reviewRoute.post(
     if (isAlreadyReview !== null) return response.badRequest('You already review this product')
 
     const reviewData = {
-      user: {
-        imgUrl: user.imgUrl,
-        name: `${user.firstName} ${user.lastName}`,
-        _id: user._id
-      },
+      user: user._id,
       productId: product._id,
       star: req.body.star,
       ratingLevel: req.body.ratingLevel,
@@ -61,20 +57,26 @@ reviewRoute.post(
     if (!review._id) return response.badRequest("Review couldn't be created")
 
     const totalReviews = product.ratings.totalReviews + 1
-    const newStar = (product.ratings.star * product.ratings.totalReviews + review.star) / totalReviews
+    const averageStar = (product.ratings.star * product.ratings.totalReviews + review.star) / totalReviews
 
-    await ProductController.update({
-      id: product._id,
-      product: {
-        ...product,
-        ratings: {
-          star: newStar,
-          totalReviews: totalReviews
-        }
-      }
-    })
-
+    product.ratings.star = averageStar
+    product.ratings.totalReviews = totalReviews
+    product.save()
     return response.success(review)
+  })
+)
+
+reviewRoute.get(
+  '/get-user-all-reviews',
+  validator(paramId, ValidationSource.PARAM),
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const response = new ApiResponse(res)
+
+    //@ts-expect-error
+    const user = req.user as IAuth
+
+    const reviews = await ReviewController.getUserAllReviews(user._id as unknown as Schema.Types.ObjectId)
+    response.success({ totals: reviews.length, reviews })
   })
 )
 

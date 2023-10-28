@@ -146,7 +146,7 @@ productRoute.put(
   '/update/:id',
   upload.array('images'),
   validator(paramId, ValidationSource.PARAM),
-  // validator(productUpdateSchema),
+  validator(productUpdateSchema),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -155,14 +155,14 @@ productRoute.put(
     if (!product?._id) return response.badRequest('Product not found')
     if (!req.body.imagesLinks?.length && !req.files?.length) return response.badRequest('Please upload image')
 
-    if (req.body.imagesLinks.length === 1 && !req.files?.length)
+    if (req.body.imagesLinks?.length === 1 && !req.files?.length)
       return response.badRequest('Minimum one image is required')
 
     const images = await updateProfileImageHandler({
       //@ts-expect-error
       files: req.files,
-      imagesLinks: req.body.imagesLinks,
-      productImgInDatabase: product.images
+      imgInDb: product.images,
+      imgInRequest: req.body.imagesLinks
     })
 
     delete req.body.imagesLinks

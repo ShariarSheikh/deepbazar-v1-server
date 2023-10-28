@@ -10,11 +10,7 @@ export enum RatingLevelEnum {
 }
 
 export interface IReview extends Document {
-  user: {
-    imgUrl: string
-    _id: string
-    name: string
-  }
+  user: Schema.Types.ObjectId
   productId: Schema.Types.ObjectId
   star: number
   ratingLevel: RatingLevelEnum
@@ -25,17 +21,13 @@ export interface IReview extends Document {
 
 const reviewSchema = new Schema(
   {
-    user: {
-      imgUrl: { type: String, default: '' },
-      _id: { type: Schema.Types.ObjectId, required: true },
-      name: { type: String, required: true }
-    },
+    user: { type: Schema.Types.ObjectId, ref: 'Auth', required: true },
     productId: { type: Schema.Types.ObjectId, required: true },
     star: { type: Number, required: true },
     ratingLevel: { type: String, enum: Object.values(RatingLevelEnum), required: true },
     message: { type: String, required: true }
   },
-  { timestamps: true }
+  { timestamps: true, strictPopulate: false }
 )
 
 const ReviewModel = model<IReview>('Reviews', reviewSchema)

@@ -3,7 +3,14 @@ import ReviewModel, { IReview } from '../models/Review.Model'
 
 class ReviewController {
   public async allReviewByProductId(id: mongoose.Schema.Types.ObjectId) {
-    return await ReviewModel.find({ productId: id }).limit(10)
+    return await ReviewModel.find({ productId: id })
+      .limit(10)
+      .populate({
+        path: 'user',
+        select: 'firstName lastName imgUrl _id'
+      })
+      .lean()
+      .exec()
   }
 
   public async create(review: IReview) {
@@ -17,11 +24,9 @@ class ReviewController {
     return await ReviewModel.findOne({ 'user._id': id, productId })
   }
 
-  // public async listBySellerId(query: { sellerId: string; limit: number }) {
-  //   const { sellerId, limit } = query
-
-  //   return await ReviewModel.find({ sellerId: sellerId }).limit(limit)
-  // }
+  public async getUserAllReviews(id: mongoose.Schema.Types.ObjectId) {
+    return await ReviewModel.find({ user: id }).limit(10)
+  }
 
   // public async detailsByProductId(id: mongoose.Schema.Types.ObjectId) {
   //   return await ReviewModel.findById(id)
