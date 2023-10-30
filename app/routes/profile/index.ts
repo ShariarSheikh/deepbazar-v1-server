@@ -13,6 +13,8 @@ import { Role } from '../../models/Auth.Model'
 import { paramId, updatePasswordSchema, updateSchema } from './schema'
 import upload from '../../middleware/multer'
 import { deleteImgFromCloudinary, uploadProfileImg } from '../../helpers/cloudinaryUtils'
+import ReviewController from '../../controllers/ReviewController'
+import WishlistController from '../../controllers/WishlistController'
 
 const profileRoute = express.Router()
 
@@ -51,7 +53,11 @@ profileRoute.delete(
     await TokenController.deleteByUserId(user._id)
 
     for (const userRole in user.role) {
-      if (userRole === Role.SELLER) ProductController.deleteAllProductByUserId(user._id)
+      if (userRole === Role.SELLER) await ProductController.deleteAllProductByUserId(user._id)
+      else {
+        await ReviewController.deleteAllReviewsByUserId(user._id)
+        await WishlistController.deleteAllWishlistByUserId(user._id)
+      }
     }
 
     return response.success('Successfully deleted your account')

@@ -1,10 +1,10 @@
+import { paramId } from './../profile/schema'
 import { NextFunction, Request, Response, Router } from 'express'
 import asyncHandler from '../../helpers/asyncHandler'
 import ProductController from '../../controllers/ProductController'
 import ApiResponse from '../../core/ApiResponse'
 import validator, { ValidationSource } from '../../helpers/validator'
 import { reviewCreateSchema } from './schema'
-import { paramId } from '../../routes/profile/schema'
 import authenticate from '../../auth/authenticate'
 import checkRole from '../../helpers/checkRole'
 import { IAuth, Role } from '../../models/Auth.Model'
@@ -47,7 +47,7 @@ reviewRoute.post(
 
     const reviewData = {
       user: user._id,
-      productId: product._id,
+      product: product._id,
       star: req.body.star,
       ratingLevel: req.body.ratingLevel,
       message: req.body.message
@@ -68,7 +68,6 @@ reviewRoute.post(
 
 reviewRoute.get(
   '/get-user-all-reviews',
-  validator(paramId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -77,6 +76,44 @@ reviewRoute.get(
 
     const reviews = await ReviewController.getUserAllReviews(user._id as unknown as Schema.Types.ObjectId)
     response.success({ totals: reviews.length, reviews })
+  })
+)
+
+reviewRoute.delete(
+  '/delete/:id',
+  validator(paramId, ValidationSource.PARAM),
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const response = new ApiResponse(res)
+
+    const reviewId = req.params.id as unknown as Schema.Types.ObjectId
+    const review = await ReviewController.findReviewById(reviewId)
+    if (!review?._id) return response.notFound('Review not found')
+
+    const deletedReview = await ReviewController.delete(review?._id)
+    if (!deletedReview?._id) return response.badRequest("Review couldn't be deleted")
+
+    //@ts-expect-error
+    const productId = review.product._id as unknown as Schema.Types.ObjectId
+    const product = await ProductController.detailsByProductId(productId)
+    if (!product?._id) return response.notFound('Product not found')
+
+    const totalReviews = product.ratings.totalReviews - 1
+    let averageStar = product.ratings.star
+
+    if (totalReviews > 0) {
+      // Calculate the average star rating without the deleted review
+      averageStar = (averageStar * (totalReviews + 1) - review.star) / totalReviews
+    } else {
+      // If there are no more reviews, set the average rating to 0
+      averageStar = 0
+    }
+
+    // Update the product's ratings
+    product.ratings.star = averageStar
+    product.ratings.totalReviews = totalReviews
+    product.save()
+
+    return response.success(deletedReview)
   })
 )
 

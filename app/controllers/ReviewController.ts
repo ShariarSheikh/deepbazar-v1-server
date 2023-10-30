@@ -3,11 +3,15 @@ import ReviewModel, { IReview } from '../models/Review.Model'
 
 class ReviewController {
   public async allReviewByProductId(id: mongoose.Schema.Types.ObjectId) {
-    return await ReviewModel.find({ productId: id })
+    return await ReviewModel.find({ product: id })
       .limit(10)
       .populate({
         path: 'user',
         select: 'firstName lastName imgUrl _id'
+      })
+      .populate({
+        path: 'product',
+        select: '_id'
       })
       .lean()
       .exec()
@@ -24,25 +28,34 @@ class ReviewController {
     return await ReviewModel.findOne({ 'user._id': id, productId })
   }
 
-  public async getUserAllReviews(id: mongoose.Schema.Types.ObjectId) {
-    return await ReviewModel.find({ user: id }).limit(10)
+  public async findReviewById(id: mongoose.Schema.Types.ObjectId) {
+    return await ReviewModel.findById(id)
   }
 
-  // public async detailsByProductId(id: mongoose.Schema.Types.ObjectId) {
-  //   return await ReviewModel.findById(id)
-  // }
-
-  // public async update({ id, product }: { id: mongoose.Schema.Types.ObjectId; product: IProject }) {
+  public async getUserAllReviews(id: mongoose.Schema.Types.ObjectId) {
+    return await ReviewModel.find({ user: id })
+      .limit(10)
+      .populate({
+        path: 'product',
+        select: '_id title images'
+      })
+      .lean()
+      .exec()
+  }
+  // public async update({ id, product }: { id: mongoose.Schema.Types.ObjectId; product: IReview }) {
   //   return await ReviewModel.findByIdAndUpdate(id, product, { new: true })
   // }
 
-  // public async delete(deleteId: string) {
-  //   return await ReviewModel.findByIdAndDelete(deleteId)
-  // }
+  public async delete(deleteId: mongoose.Schema.Types.ObjectId) {
+    return await ReviewModel.findByIdAndDelete(deleteId).populate({
+      path: 'product',
+      select: '_id'
+    })
+  }
 
-  // public async deleteAllProductByUserId(sellerId: mongoose.Schema.Types.ObjectId) {
-  //   return await ReviewModel.deleteMany({ sellerId: sellerId })
-  // }
+  public async deleteAllReviewsByUserId(userId: mongoose.Schema.Types.ObjectId) {
+    return await ReviewModel.deleteMany({ user: userId })
+  }
 }
 
 export default new ReviewController()

@@ -2,7 +2,7 @@ import Joi from 'joi'
 import { ProductSectionName, ProductSectionNameType, ProductStatus } from '../../models/Product.Model'
 
 export const productCreateSchema = Joi.object({
-  title: Joi.string().required().min(5).max(400),
+  title: Joi.string().required().min(5).max(90),
   productCode: Joi.string().required().min(5),
   category: Joi.string().required(),
   productSectionName: Joi.string()
@@ -26,7 +26,7 @@ export const productCreateSchema = Joi.object({
 })
 
 export const productUpdateSchema = Joi.object({
-  title: Joi.string().min(5).max(400),
+  title: Joi.string().min(5).max(90),
   productCode: Joi.string().min(5),
   status: Joi.string()
     .valid(...Object.values(ProductStatus))
@@ -41,7 +41,6 @@ export const productUpdateSchema = Joi.object({
     totalReviews: Joi.number()
   }),
   totalAnswers: Joi.number(),
-  totalWishlist: Joi.number(),
   price: Joi.number().min(1),
   discountPrice: Joi.number(),
   discountPercent: Joi.number().min(1).max(99).allow(0),

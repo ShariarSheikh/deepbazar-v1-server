@@ -11,7 +11,7 @@ export enum RatingLevelEnum {
 
 export interface IReview extends Document {
   user: Schema.Types.ObjectId
-  productId: Schema.Types.ObjectId
+  product: Schema.Types.ObjectId
   star: number
   ratingLevel: RatingLevelEnum
   message: string
@@ -22,7 +22,7 @@ export interface IReview extends Document {
 const reviewSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: 'Auth', required: true },
-    productId: { type: Schema.Types.ObjectId, required: true },
+    product: { type: Schema.Types.ObjectId, ref: 'Products', required: true },
     star: { type: Number, required: true },
     ratingLevel: { type: String, enum: Object.values(RatingLevelEnum), required: true },
     message: { type: String, required: true }
