@@ -7,6 +7,7 @@ import profileRoute from './profile'
 import reviewRoute from './review'
 import wishlistRoute from './wishlist'
 import shippingAddressRoute from './shippingAddress'
+import orderRoute from './order'
 
 const router = Router()
 
@@ -44,5 +45,8 @@ router.use('/api/wishlist', wishlistRoute)
 
 //WISHLIST
 router.use('/api/shippingAddress', shippingAddressRoute)
+
+//WISHLIST
+router.use('/api/order', orderRoute)
 
 export default router
