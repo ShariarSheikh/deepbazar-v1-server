@@ -9,6 +9,14 @@ class CategoryController {
     return await CategoriesModel.create(category)
   }
 
+  public async getById(id: string) {
+    return await CategoriesModel.findById(id)
+  }
+
+  public async getByCategoryName(name: string) {
+    return await CategoriesModel.findOne({ name: name })
+  }
+
   public async updateById({ id, category }: { id: string; category: ICategory }) {
     return await CategoriesModel.findByIdAndUpdate(id, category, { new: true })
   }

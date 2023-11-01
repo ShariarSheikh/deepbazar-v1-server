@@ -56,6 +56,10 @@ class ReviewController {
   public async deleteAllReviewsByUserId(userId: mongoose.Schema.Types.ObjectId) {
     return await ReviewModel.deleteMany({ user: userId })
   }
+
+  public async deleteAllReviewsByProductId(productId: mongoose.Schema.Types.ObjectId) {
+    return await ReviewModel.deleteMany({ _id: productId })
+  }
 }
 
 export default new ReviewController()

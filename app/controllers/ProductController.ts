@@ -6,14 +6,14 @@ class ProductController {
   //@ts-ignore
   public async listWithQuery(query) {
     const limit = query.limit
-    const pageLength = query.pageLength
+    const skip = (query.pageLength - 1) * limit
 
     //@ts-ignore
     delete query.limit
     //@ts-ignore
     delete query.pageLength
 
-    return await ProductModel.find(query).limit(limit)
+    return await ProductModel.find(query).limit(limit).skip(skip)
   }
 
   public async listBySellerId(query: { sellerId: string; limit: number }) {

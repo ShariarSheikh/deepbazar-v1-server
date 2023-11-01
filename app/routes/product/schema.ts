@@ -3,7 +3,6 @@ import { ProductSectionName, ProductSectionNameType, ProductStatus } from '../..
 
 export const productCreateSchema = Joi.object({
   title: Joi.string().required().min(5).max(90),
-  productCode: Joi.string().required().min(5),
   category: Joi.string().required(),
   productSectionName: Joi.string()
     .valid(...Object.values(ProductSectionName))
@@ -27,7 +26,6 @@ export const productCreateSchema = Joi.object({
 
 export const productUpdateSchema = Joi.object({
   title: Joi.string().min(5).max(90),
-  productCode: Joi.string().min(5),
   status: Joi.string()
     .valid(...Object.values(ProductStatus))
     .allow(''),
@@ -73,35 +71,21 @@ export const productUpdateSchema = Joi.object({
 
 //------------------------------------------- api query
 
-interface ProductFilterByType {
-  MostPopular: string
-  Regular: string
-}
-
 export interface CategoryQuery {
   category: string
   pageLength: number
   limit: number
   startPrice: number
   endPrice: number
-  filterBy: ProductFilterByType
   productSectionName: ProductSectionNameType
 }
-
-export const ProductFilterBy = {
-  MostPopular: 'MostPopular',
-  Regular: 'Regular'
-} as const
 
 export const categoryQuerySchema = Joi.object({
   category: Joi.string().min(3).max(50).allow(''),
   pageLength: Joi.number().allow(0),
   limit: Joi.number().allow(0),
-  startPrice: Joi.number().allow(0),
-  endPrice: Joi.number().allow(0),
-  filterBy: Joi.string()
-    .valid(...Object.values(ProductFilterBy))
-    .allow(''),
+  startPrice: Joi.string().allow(''),
+  endPrice: Joi.string().allow(''),
   productSectionName: Joi.string()
     .valid(...Object.values(ProductSectionName))
     .allow('')

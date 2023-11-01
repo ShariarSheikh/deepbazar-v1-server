@@ -3,7 +3,7 @@ import asyncHandler from '../../helpers/asyncHandler'
 import ProductController from '../../controllers/ProductController'
 import ApiResponse from '../../core/ApiResponse'
 import validator, { ValidationSource } from '../../helpers/validator'
-import { ProductFilterBy, categoryQuerySchema, productCreateSchema, productUpdateSchema } from './schema'
+import { categoryQuerySchema, productCreateSchema, productUpdateSchema } from './schema'
 import { paramId } from '../../routes/profile/schema'
 import authenticate from '../../auth/authenticate'
 import checkRole from '../../helpers/checkRole'
@@ -13,6 +13,9 @@ import upload from '../../middleware/multer'
 import AuthController from '../../controllers/AuthController'
 import { deleteImgFromCloudinary, uploadProductImages } from '../../helpers/cloudinaryUtils'
 import updateProfileImageHandler from '../../helpers/updateProductImageHandler'
+import CategoryController from '../../controllers/CategoryController'
+import ReviewController from '../../controllers/ReviewController'
+import { ProductListApiQueryFilter, formatPrice } from './utils'
 
 const productRoute = Router()
 
@@ -22,27 +25,9 @@ productRoute.get(
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
-    const { category, pageLength, limit, startPrice, endPrice, filterBy, productSectionName } = req.query
+    const queries = ProductListApiQueryFilter(req.query)
 
-    //@ts-ignore
-    const query = {
-      pageLength: 1,
-      limit: 10,
-      price: { $gte: 1, $lte: 1000000000 }
-    }
-
-    //@ts-ignore
-    if (category) query.category = category
-    if (pageLength) query.pageLength = Number(pageLength)
-    if (limit) query.limit = Number(limit)
-    //@ts-ignore // if filterBy have MostPopular value then query data which have greater than 2 star rate
-    if (filterBy && filterBy === ProductFilterBy.MostPopular) query['ratings.star'] = { $gte: 2 }
-    if (startPrice) query.price.$gte = Number(startPrice)
-    if (endPrice) query.price.$lte = Number(endPrice)
-    //@ts-ignore
-    if (productSectionName) query.productSectionName = productSectionName
-
-    const getProducts = await ProductController.listWithQuery(query)
+    const getProducts = await ProductController.listWithQuery(queries)
 
     const products = getProducts.map((product) => ({
       _id: product._id,
@@ -137,7 +122,19 @@ productRoute.post(
 
     req.body.images = images
 
+    req.body.price = formatPrice(req.body.price)
+    req.body.discountPrice = formatPrice(req.body.discountPrice)
+    req.body.discountPercent = formatPrice(req.body.discountPercent)
+
     const createdProduct = await ProductController.create(req.body)
+    if (!createdProduct._id) return response.badRequest("Product couldn't be created")
+
+    const productCategory = await CategoryController.getByCategoryName(createdProduct.category)
+    if (!productCategory?._id) return response.badRequest('Product Category not found')
+
+    productCategory.totalItems++
+    productCategory.save()
+
     return response.success(createdProduct)
   })
 )
@@ -155,9 +152,6 @@ productRoute.put(
     if (!product?._id) return response.badRequest('Product not found')
     if (!req.body.imagesLinks?.length && !req.files?.length) return response.badRequest('Please upload image')
 
-    if (req.body.imagesLinks?.length === 1 && !req.files?.length)
-      return response.badRequest('Minimum one image is required')
-
     const images = await updateProfileImageHandler({
       //@ts-expect-error
       files: req.files,
@@ -167,6 +161,10 @@ productRoute.put(
 
     delete req.body.imagesLinks
     req.body.images = images
+
+    req.body.price = formatPrice(req.body.price)
+    req.body.discountPrice = formatPrice(req.body.discountPrice)
+    req.body.discountPercent = formatPrice(req.body.discountPercent)
 
     const updatedProduct = await ProductController.update({ id: product._id, product: req.body })
     return response.success(updatedProduct)
@@ -183,15 +181,31 @@ productRoute.delete(
     const product = await ProductController.detailsByProductId(req.params.id)
     if (!product?._id) return response.badRequest('Product not found')
 
-    const updatedProduct = await ProductController.delete(req.params.id)
+    const deletedProduct = await ProductController.delete(req.params.id)
 
-    updatedProduct?.images.map((imageData) => {
+    // DELETE
+    if (!deletedProduct?._id) return response.badRequest("Product couldn't be deleted")
+
+    deletedProduct?.images.map((imageData) => {
       deleteImgFromCloudinary(imageData.publicId)
     })
 
-    // after delete this product then delete the reviews and ans of this product below->
+    // UPDATE CATEGORY
+    const productCategory = await CategoryController.getByCategoryName(deletedProduct.category)
+    if (!productCategory?._id) return response.badRequest('Product Category not found')
 
-    return response.success(updatedProduct)
+    productCategory.totalItems--
+    productCategory.save()
+
+    // DELETE ALL REVIEWS EXITS ON THIS PRODUCTS
+    await ReviewController.deleteAllReviewsByProductId(deletedProduct._id)
+
+    // DELETE FROM QUESTION & ANSWER
+    //code
+
+    // DELETE FROM WISHLIST
+    //code
+    return response.success(deletedProduct)
   })
 )
 

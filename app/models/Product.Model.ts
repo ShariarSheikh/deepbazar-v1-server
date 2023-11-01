@@ -28,7 +28,6 @@ export interface ProductImageType {
 
 export interface IProject extends Document {
   title: string
-  productCode: string
   status: ProductStatusType
   category: string
   productSectionName: ProductSectionNameType
@@ -59,7 +58,6 @@ export interface IProject extends Document {
 const productSchema = new Schema(
   {
     title: { type: String, required: true, unique: true },
-    productCode: { type: String, required: true, unique: true },
     status: { type: String, enum: Object.values(ProductStatus), required: true, default: ProductStatus.Pending },
     category: { type: String, required: true },
     productSectionName: { type: String, enum: Object.values(ProductSectionName), required: true },
