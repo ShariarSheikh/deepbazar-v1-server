@@ -1,4 +1,4 @@
-interface QueryType {
+export interface ProductListQueryType {
   pageLength?: number
   limit: number
   category?: string
@@ -24,16 +24,16 @@ export function ProductListApiQueryFilter({
   startPrice = 1,
   endPrice = 100000000,
   productSectionName
-}: ProductListApiQueryFilter): QueryType {
+}: ProductListApiQueryFilter): ProductListQueryType {
   //@ts-expect-error
-  const query: QueryType = {
+  const query: ProductListQueryType = {
     pageLength,
     limit
   }
 
   if (category) query.category = category.charAt(0).toUpperCase() + category.slice(1)
-  if (pageLength > 0) query.pageLength = pageLength
-  if (limit > 0) query.limit = limit
+  if (pageLength > 0) query.pageLength = Number(pageLength)
+  if (limit > 0) query.limit = Number(limit)
 
   if (startPrice > 0) query.price = { $gte: startPrice }
   if (endPrice > 0) query.price = { ...query.price, $lte: endPrice }

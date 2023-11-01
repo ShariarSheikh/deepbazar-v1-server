@@ -1,19 +1,23 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import mongoose from 'mongoose'
 import ProductModel, { IProject } from '../models/Product.Model'
+import { ProductListQueryType } from '../routes/product/utils'
 
 class ProductController {
-  //@ts-ignore
-  public async listWithQuery(query) {
+  public async listWithQuery(query: ProductListQueryType) {
+    const pageLength = query.pageLength ?? 1
     const limit = query.limit
-    const skip = (query.pageLength - 1) * limit
 
-    //@ts-ignore
+    const skip = (pageLength - 1) * limit
+
+    //@ts-expect-error
     delete query.limit
-    //@ts-ignore
     delete query.pageLength
 
-    return await ProductModel.find(query).limit(limit).skip(skip)
+    // aggregation pipeline
+
+    const pipeline = [{ $match: query }, { $skip: skip }, { $limit: limit }, { $sample: { size: limit } }]
+    return await ProductModel.aggregate(pipeline)
   }
 
   public async listBySellerId(query: { sellerId: string; limit: number }) {
