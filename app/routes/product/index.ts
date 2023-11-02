@@ -26,7 +26,6 @@ productRoute.get(
     const response = new ApiResponse(res)
 
     const queries = ProductListApiQueryFilter(req.query)
-
     const getProducts = await ProductController.listWithQuery(queries)
 
     const products = getProducts.map((product) => ({

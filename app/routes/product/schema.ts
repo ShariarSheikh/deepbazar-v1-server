@@ -71,19 +71,21 @@ export const productUpdateSchema = Joi.object({
 
 //------------------------------------------- api query
 
-export interface CategoryQuery {
-  category: string
-  pageLength: number
-  limit: number
-  startPrice: number
-  endPrice: number
-  productSectionName: ProductSectionNameType
-}
+// export interface CategoryQuery {
+//   category: string
+//   pageLength: number
+//   limit: number
+//   discountPriceUpTo: number
+//   startPrice: number
+//   endPrice: number
+//   productSectionName: ProductSectionNameType
+// }
 
 export const categoryQuerySchema = Joi.object({
   category: Joi.string().min(3).max(50).allow(''),
   pageLength: Joi.number().allow(0),
   limit: Joi.number().allow(0),
+  discountPercentUpTo: Joi.number().allow(0),
   startPrice: Joi.string().allow(''),
   endPrice: Joi.string().allow(''),
   productSectionName: Joi.string()
