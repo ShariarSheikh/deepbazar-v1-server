@@ -14,8 +14,16 @@ class OrderController {
     return await OrderModel.findById(orderId)
   }
 
+  public async findByOrderId(orderId: string) {
+    return await OrderModel.findOne({ orderId: orderId })
+  }
+
   public async getAllByUserId(userId: mongoose.Schema.Types.ObjectId) {
     return await OrderModel.find({ user: userId }).lean().exec()
+  }
+
+  public async deleteAllByUserId(userId: mongoose.Schema.Types.ObjectId) {
+    return await OrderModel.deleteMany({ user: userId })
   }
 }
 

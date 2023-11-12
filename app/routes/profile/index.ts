@@ -10,11 +10,15 @@ import ApiResponse from '../../core/ApiResponse'
 import asyncHandler from '../../helpers/asyncHandler'
 import validator, { ValidationSource } from '../../helpers/validator'
 import { Role } from '../../models/Auth.Model'
-import { paramId, updatePasswordSchema, updateSchema } from './schema'
+import { paramObjId, updatePasswordSchema, updateSchema } from './schema'
 import upload from '../../middleware/multer'
 import { deleteImgFromCloudinary, uploadProfileImg } from '../../helpers/cloudinaryUtils'
 import ReviewController from '../../controllers/ReviewController'
 import WishlistController from '../../controllers/WishlistController'
+import { Schema } from 'mongoose'
+import OrderController from '../../controllers/OrderController'
+import ShippingAddressController from '../../controllers/ShippingAddressController'
+import QAndAnsController from '../../controllers/QAndAnsController'
 
 const profileRoute = express.Router()
 
@@ -37,14 +41,51 @@ profileRoute.get(
 profileRoute.use(authenticate)
 //--------------------------
 
-profileRoute.delete(
-  '/delete/:id',
-  validator(paramId, ValidationSource.PARAM),
+profileRoute.get(
+  '/get-user-dashboard',
   asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
     const response = new ApiResponse(res)
 
     //@ts-ignore
-    const user = await AuthController.findUserWithId(req.params.id)
+    const userId = req.user._id as unknown as Schema.Types.ObjectId
+
+    const orders = await OrderController.getAllByUserId(userId)
+    const wishlist = await WishlistController.getUserAllWishlist(userId)
+    const shippingAddress = await ShippingAddressController.getAllByUserId(userId)
+    const reviews = await ReviewController.getUserAllReviews(userId)
+    const question = await QAndAnsController.getUserAllQAndAns(userId)
+
+    const dashboard = {
+      orders: orders.length,
+      wishlist: wishlist.length,
+      shippingAddress: shippingAddress.length,
+      reviews: reviews.length,
+      question: question.length
+    }
+
+    return response.success(dashboard)
+  })
+)
+
+profileRoute.get(
+  '/get-seller-dashboard',
+  asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+    const response = new ApiResponse(res)
+
+    //@ts-ignore
+    const userId = req.user._id as unknown as Schema.Types.ObjectId
+    const totalProducts = await ProductController.listBySellerId({ limit: 100000000, sellerId: userId })
+    return response.success({ products: totalProducts.length })
+  })
+)
+
+profileRoute.delete(
+  '/delete/:id',
+  validator(paramObjId, ValidationSource.PARAM),
+  asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
+    const response = new ApiResponse(res)
+
+    const user = await AuthController.findUserWithId(req.params.id as unknown as Schema.Types.ObjectId)
     if (!user?.email) return response.badRequest('User not found')
 
     if (user.imgUrl && user.imgPublicId) await deleteImgFromCloudinary(user.imgPublicId)
@@ -57,6 +98,9 @@ profileRoute.delete(
       else {
         await ReviewController.deleteAllReviewsByUserId(user._id)
         await WishlistController.deleteAllWishlistByUserId(user._id)
+        await QAndAnsController.deleteAllQAndAnsByUserId(user._id)
+        await OrderController.deleteAllByUserId(user._id)
+        await ShippingAddressController.deleteAllByUserId(user._id)
       }
     }
 
@@ -66,14 +110,13 @@ profileRoute.delete(
 
 profileRoute.put(
   '/update/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   validator(updateSchema),
   upload.single('imgUrl'),
   asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
     const response = new ApiResponse(res)
 
-    //@ts-ignore
-    const user = await AuthController.findUserWithId(req.params.id)
+    const user = await AuthController.findUserWithId(req.params.id as unknown as Schema.Types.ObjectId)
     if (!user?.email) return response.badRequest('User not found')
 
     if (req.file?.fieldname) {
@@ -109,13 +152,12 @@ profileRoute.put(
 
 profileRoute.put(
   '/update-password/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   validator(updatePasswordSchema),
   asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
     const response = new ApiResponse(res)
 
-    //@ts-ignore
-    const user = await AuthController.findUserWithId(req.params.id)
+    const user = await AuthController.findUserWithId(req.params.id as unknown as Schema.Types.ObjectId)
     if (!user?.email) return response.badRequest('User not found')
 
     const match = await bcrypt.compare(req.body.oldPassword, user.password)
@@ -135,7 +177,9 @@ profileRoute.get(
     const response = new ApiResponse(res)
 
     //@ts-ignore
-    const user = await AuthController.findUserWithId(req.user?._id)
+    const userBody = req.user
+
+    const user = await AuthController.findUserWithId(userBody._id as unknown as Schema.Types.ObjectId)
     if (!user?.email) return response.badRequest('User not found')
 
     await AuthController.findUserWithIdAndUpdate(user._id, req.body)

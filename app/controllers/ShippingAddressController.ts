@@ -27,6 +27,10 @@ class ShippingAddressController {
       .lean()
       .exec()
   }
+
+  public async deleteAllByUserId(userId: mongoose.Schema.Types.ObjectId) {
+    return await ShippingAddressModel.deleteMany({ user: userId })
+  }
 }
 
 export default new ShippingAddressController()

@@ -1,4 +1,4 @@
-import { paramId } from './../profile/schema'
+import { paramObjId } from './../profile/schema'
 import { NextFunction, Request, Response, Router } from 'express'
 import asyncHandler from '../../helpers/asyncHandler'
 import ProductController from '../../controllers/ProductController'
@@ -17,7 +17,7 @@ const reviewRoute = Router()
 
 reviewRoute.get(
   '/list-by-productId/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -81,7 +81,7 @@ reviewRoute.get(
 
 reviewRoute.delete(
   '/delete/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 

@@ -8,6 +8,7 @@ import reviewRoute from './review'
 import wishlistRoute from './wishlist'
 import shippingAddressRoute from './shippingAddress'
 import orderRoute from './order'
+import qAndAnsRoute from './qAndAns'
 
 const router = Router()
 
@@ -39,6 +40,9 @@ router.use('/api/product', productRoute)
 
 //REVIEW
 router.use('/api/review', reviewRoute)
+
+//QUESTION & ANSWER
+router.use('/api/question_answer', qAndAnsRoute)
 
 //WISHLIST
 router.use('/api/wishlist', wishlistRoute)

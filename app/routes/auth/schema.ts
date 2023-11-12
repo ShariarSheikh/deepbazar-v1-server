@@ -59,3 +59,18 @@ export const loginSchema = Joi.object({
 export const refreshTokenSchema = Joi.object({
   refreshToken: Joi.string().required()
 })
+
+export const verifiedEmailSchema = Joi.object({
+  id: Joi.string(),
+  email: Joi.string().email()
+})
+
+export const resetPasswordSendMailSchema = Joi.object({
+  email: Joi.string().email()
+})
+
+export const resetPasswordSchema = Joi.object({
+  id: Joi.string(),
+  email: Joi.string().email(),
+  password: Joi.string().required().min(6).max(100)
+})

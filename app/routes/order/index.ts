@@ -3,7 +3,7 @@ import asyncHandler from '../../helpers/asyncHandler'
 import OrderController from '../../controllers/OrderController'
 import ApiResponse from '../../core/ApiResponse'
 import validator, { ValidationSource } from '../../helpers/validator'
-import { paramId } from './../profile/schema'
+import { paramId, paramObjId } from './../profile/schema'
 import { Schema } from 'mongoose'
 import authenticate from '../../auth/authenticate'
 import checkRole from '../../helpers/checkRole'
@@ -41,7 +41,7 @@ orderRoute.post(
 
 orderRoute.delete(
   '/delete/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -55,7 +55,7 @@ orderRoute.delete(
 // Get an order by ID
 orderRoute.get(
   '/get/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -68,10 +68,24 @@ orderRoute.get(
   })
 )
 
+orderRoute.get(
+  '/getByOrderId/:id',
+  validator(paramId, ValidationSource.PARAM),
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const response = new ApiResponse(res)
+
+    const orderId = req.params.id as unknown as string
+    const order = await OrderController.findByOrderId(orderId)
+    if (!order?._id) return response.notFound('Order not found')
+
+    return response.success(order)
+  })
+)
+
 // Get all orders by user ID
 orderRoute.get(
   '/get-all-order-user/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 

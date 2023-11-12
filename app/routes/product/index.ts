@@ -4,7 +4,7 @@ import ProductController from '../../controllers/ProductController'
 import ApiResponse from '../../core/ApiResponse'
 import validator, { ValidationSource } from '../../helpers/validator'
 import { categoryQuerySchema, productCreateSchema, productUpdateSchema } from './schema'
-import { paramId } from '../../routes/profile/schema'
+import { paramObjId } from '../../routes/profile/schema'
 import authenticate from '../../auth/authenticate'
 import checkRole from '../../helpers/checkRole'
 import { Role } from '../../models/Auth.Model'
@@ -16,6 +16,7 @@ import updateProfileImageHandler from '../../helpers/updateProductImageHandler'
 import CategoryController from '../../controllers/CategoryController'
 import ReviewController from '../../controllers/ReviewController'
 import { ProductListApiQueryFilter, formatPrice } from './utils'
+import QAndAnsController from '../../controllers/QAndAnsController'
 
 const productRoute = Router()
 
@@ -46,8 +47,32 @@ productRoute.get(
 )
 
 productRoute.get(
+  '/get-sponsor-item',
+  validator(categoryQuerySchema, ValidationSource.QUERY),
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const response = new ApiResponse(res)
+
+    const item = await ProductController.getSponsorItem()
+    const sponsorItem = {
+      _id: item[0]._id,
+      title: item[0].title,
+      imgUrl: item[0].images[0].displayImg,
+      price: item[0].price,
+      discountPrice: item[0].discountPrice,
+      discountPercent: item[0].discountPercent,
+      offerText: item[0].offerText,
+      ratings: item[0].ratings,
+      inStock: item[0].inStock,
+      category: item[0].category
+    }
+
+    response.success(sponsorItem)
+  })
+)
+
+productRoute.get(
   '/get-details-by-id/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -63,7 +88,7 @@ productRoute.use(authenticate, checkRole(Role.SELLER), authorization)
 
 productRoute.get(
   '/seller-product/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -77,7 +102,7 @@ productRoute.get(
 
 productRoute.get(
   '/seller-all-product/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -141,7 +166,7 @@ productRoute.post(
 productRoute.put(
   '/update/:id',
   upload.array('images'),
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   validator(productUpdateSchema),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
@@ -172,7 +197,7 @@ productRoute.put(
 
 productRoute.delete(
   '/delete/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -200,6 +225,7 @@ productRoute.delete(
     await ReviewController.deleteAllReviewsByProductId(deletedProduct._id)
 
     // DELETE FROM QUESTION & ANSWER
+    await QAndAnsController.deleteAllQAndAnsByProductId(deletedProduct._id)
     //code
 
     // DELETE FROM WISHLIST

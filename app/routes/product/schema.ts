@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { ProductSectionName, ProductSectionNameType, ProductStatus } from '../../models/Product.Model'
+import { ProductSectionName, ProductStatus } from '../../models/Product.Model'
 
 export const productCreateSchema = Joi.object({
   title: Joi.string().required().min(5).max(90),
@@ -34,11 +34,6 @@ export const productUpdateSchema = Joi.object({
     .valid(...Object.values(ProductSectionName))
     .allow(''),
   sellerId: Joi.string(),
-  ratings: Joi.object({
-    star: Joi.number(),
-    totalReviews: Joi.number()
-  }),
-  totalAnswers: Joi.number(),
   price: Joi.number().min(1),
   discountPrice: Joi.number(),
   discountPercent: Joi.number().min(1).max(99).allow(0),
@@ -68,18 +63,6 @@ export const productUpdateSchema = Joi.object({
   specification: Joi.string().allow(''),
   tags: Joi.array().items(Joi.string()).min(1)
 })
-
-//------------------------------------------- api query
-
-// export interface CategoryQuery {
-//   category: string
-//   pageLength: number
-//   limit: number
-//   discountPriceUpTo: number
-//   startPrice: number
-//   endPrice: number
-//   productSectionName: ProductSectionNameType
-// }
 
 export const categoryQuerySchema = Joi.object({
   category: Joi.string().min(3).max(50).allow(''),

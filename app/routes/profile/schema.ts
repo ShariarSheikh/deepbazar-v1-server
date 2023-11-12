@@ -2,8 +2,12 @@ import Joi from 'joi'
 import { JoiObjectId, imgFile } from '../../routes/auth/schema'
 import { Role } from '../../models/Auth.Model'
 
-export const paramId = Joi.object({
+export const paramObjId = Joi.object({
   id: JoiObjectId().required()
+})
+
+export const paramId = Joi.object({
+  id: Joi.string().required()
 })
 
 export const updateSchema = Joi.object({

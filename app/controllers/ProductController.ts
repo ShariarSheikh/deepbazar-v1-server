@@ -20,7 +20,11 @@ class ProductController {
     return await ProductModel.aggregate(pipeline)
   }
 
-  public async listBySellerId(query: { sellerId: string; limit: number }) {
+  public async getSponsorItem() {
+    return await ProductModel.aggregate([{ $sample: { size: 1 } }]).limit(1)
+  }
+
+  public async listBySellerId(query: { sellerId: mongoose.Schema.Types.ObjectId; limit: number }) {
     const { sellerId, limit } = query
 
     return await ProductModel.find({ sellerId: sellerId }).limit(limit)

@@ -1,4 +1,4 @@
-import { paramId } from './../profile/schema'
+import { paramObjId } from './../profile/schema'
 import { NextFunction, Request, Response, Router } from 'express'
 import asyncHandler from '../../helpers/asyncHandler'
 import ProductController from '../../controllers/ProductController'
@@ -16,7 +16,7 @@ const wishlistRoute = Router()
 
 wishlistRoute.get(
   '/list-by-productId/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -31,7 +31,7 @@ wishlistRoute.use(authenticate, checkRole(Role.USER), authorization)
 
 wishlistRoute.post(
   '/create/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -63,7 +63,7 @@ wishlistRoute.post(
 
 wishlistRoute.delete(
   '/delete/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -84,7 +84,7 @@ wishlistRoute.delete(
 
 wishlistRoute.get(
   '/check-wishlist-added-or-not/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 

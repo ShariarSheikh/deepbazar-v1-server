@@ -1,4 +1,4 @@
-import { paramId } from './../profile/schema'
+import { paramObjId } from './../profile/schema'
 import { NextFunction, Request, Response, Router } from 'express'
 import asyncHandler from '../../helpers/asyncHandler'
 import ApiResponse from '../../core/ApiResponse'
@@ -73,7 +73,7 @@ shippingAddressRoute.get(
 
 shippingAddressRoute.put(
   '/make-default/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 
@@ -114,7 +114,7 @@ shippingAddressRoute.put(
 
 shippingAddressRoute.delete(
   '/delete/:id',
-  validator(paramId, ValidationSource.PARAM),
+  validator(paramObjId, ValidationSource.PARAM),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const response = new ApiResponse(res)
 

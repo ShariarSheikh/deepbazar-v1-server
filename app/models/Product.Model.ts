@@ -38,7 +38,7 @@ export interface IProject extends Document {
     star: number
     totalReviews: number
   }
-  totalAnswers: number
+  totalQuestion: number
   price: number
   discountPrice: number
   discountPercent: number
@@ -66,7 +66,7 @@ const productSchema = new Schema(
       star: { type: Number, required: true, default: 0 },
       totalReviews: { type: Number, required: true, default: 0 }
     },
-    totalAnswers: { type: Number, required: true, default: 0 },
+    totalQuestion: { type: Number, required: true, default: 0 },
     price: { type: Number, required: true },
     discountPrice: { type: Number },
     discountPercent: { type: Number },
