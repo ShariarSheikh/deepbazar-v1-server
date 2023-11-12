@@ -16,7 +16,7 @@ class ProductController {
 
     // aggregation pipeline
 
-    const pipeline = [{ $match: query }, { $skip: skip }, { $limit: limit }, { $sample: { size: limit } }]
+    const pipeline = [{ $match: query }, { $skip: skip }, { $sample: { size: limit } }, { $limit: limit }]
     return await ProductModel.aggregate(pipeline)
   }
 

@@ -1,13 +1,13 @@
-  # tokens jwt
+  # tokens
   secretAccessKey = 
   secretRefreshKey = 
 
 
  # mongodb cloud configs
-  mongoDbUserName = 
-  mongoDbpassword =
-  mongoDbcluster = 
-  mongoDbDatabaseName = 
+  mongoDbUserName= 
+  mongoDbpassword= 
+  mongoDbcluster= 
+  mongoDbDatabaseName= 
 
  # cloudinary config
   cloud_name= 
@@ -17,6 +17,24 @@
   cloudinaryProfileImgFolder = 
   cloudinaryProductImgFolder = 
   
+
+ # nodeMailer envs & brevo 
+ NODE_MAILER_HOST= 
+ NODE_MAILER_PORT= 
+ NODE_MAILER_USER= 
+ NODE_MAILER_PASS= 
+ NODE_MAILER_EMAIL_SENDER_EMAIL = 
+ 
+ VERIFICATION_EMAIL_SECRET_KEY= 
+ RESET_PASSWORD_SECRET_KEY= 
+ 
+ # website base url
+ SITE_DEV_URL= http://localhost:3000
+ SITE_PROD_URL= 
+
+
+ # api key
+  ApiKey = 
 
 
  # api key
