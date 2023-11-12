@@ -27,9 +27,9 @@ productRoute.get(
     const response = new ApiResponse(res)
 
     const queries = ProductListApiQueryFilter(req.query)
-    const getProducts = await ProductController.listWithQuery(queries)
+    const { products, productsLength } = await ProductController.listWithQuery(queries)
 
-    const products = getProducts.map((product) => ({
+    const productsData = products.map((product) => ({
       _id: product._id,
       title: product.title,
       imgUrl: product.images[0].cardImg,
@@ -42,7 +42,7 @@ productRoute.get(
       category: product.category
     }))
 
-    response.success({ totals: products.length, products })
+    response.success({ exitsLength: productsLength, totals: productsData.length, products: productsData })
   })
 )
 

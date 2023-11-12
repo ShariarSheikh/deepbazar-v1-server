@@ -7,7 +7,6 @@ class ProductController {
   public async listWithQuery(query: ProductListQueryType) {
     const pageLength = query.pageLength ?? 1
     const limit = query.limit
-
     const skip = (pageLength - 1) * limit
 
     //@ts-expect-error
@@ -15,9 +14,15 @@ class ProductController {
     delete query.pageLength
 
     // aggregation pipeline
-
     const pipeline = [{ $match: query }, { $skip: skip }, { $sample: { size: limit } }, { $limit: limit }]
-    return await ProductModel.aggregate(pipeline)
+
+    const products = await ProductModel.aggregate(pipeline)
+    const productsLength = await ProductModel.countDocuments(query)
+
+    return {
+      products,
+      productsLength
+    }
   }
 
   public async getSponsorItem() {
