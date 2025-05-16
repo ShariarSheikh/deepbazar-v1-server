@@ -1,5 +1,6 @@
-export const PORT = process.env.PORT
-export const environment = process.env.environment as string
+export const PORT = process.env.PORT || 8000
+
+export const environment = process.env.Environment as string
 
 // jwt key
 export const SECRET_ACCESS_TOKEN_KEY = process.env.secretAccessKey as string
